@@ -11,5 +11,14 @@ RoxygenNote: 7.2.1
 Imports: 
     devtools,
     stats,
-    testthat
+    testthat, 
+    SummarizedExperiment
 Config/testthat/edition: 3
+Collate: 
+    'class.R'
+    'AccessorsClassProdeInput.R'
+    'AllClasses.R'
+    'linear_models_fit_functions.R'
+    'rra_stats_functions.R'
+    'utils.R'
+    'wrapper_prode_run_function.R'

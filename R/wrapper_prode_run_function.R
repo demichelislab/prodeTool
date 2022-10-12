@@ -28,7 +28,7 @@ runProde <- function(
         filter   = filterCtrl
     )
 
-    ## 2. Retrieve graph-data ..................................................
+    ## 2. Retrieve graph-data .................................................. # Will be moved to object construction part
 
     message("[2] Collect graph data \t\t\t\t", Sys.time(), "\n")
 
@@ -41,6 +41,14 @@ runProde <- function(
         adj_mat = adj_mat
     )
 
+    stopifnot(.checkBetAdjDeg(beta_tab, adj_mat, g2deg))
+
+    #### Filter out 0 degree samples  . . . . . . . . . . . . . . . . . . . . . # This should be implemented as an object method
+    # adj_mat  <- .filter0DegAdj(adj_mat, g2deg)
+    # beta_tab <- .filter0DegBet(beta_tab, g2deg)
+    # g2deg    <- .filterDeg(g2deg)
+    # stopifnot(.checkBetAdjDeg(beta_tab, adj_mat, g2deg))
+
     ## 3. Compute new RRA probabilities ........................................
 
     message("[3] Compute background random distribution \t", Sys.time(), "\n")
@@ -48,6 +56,7 @@ runProde <- function(
     if (cores > 1){
 
         back_dis <- getRandomBetasPar(
+            nn     = nrow(beta_tab),
             degs   = g2deg,
             n_iter = 10000,
             cores  = cores

@@ -4,7 +4,7 @@
 \alias{getRandomBetas}
 \title{Runs linear models on input data}
 \usage{
-getRandomBetas(degs, n_iter)
+getRandomBetas(degs, n_iter, nn)
 }
 \arguments{
 \item{covs}{}

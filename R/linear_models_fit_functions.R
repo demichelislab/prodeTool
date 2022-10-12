@@ -22,7 +22,8 @@
 .fitModels <- function(formula, dat, yy){
     summary(stats::lm(
         formula,
-        data=dat
+        data=dat,
+        method="qr"
     ))
 }
 
@@ -38,7 +39,7 @@
 
 # Main function ----------------------------------------------------------------
 
-#' Runs linear models on input data
+#' Runs linear models on given as input a prode object.
 #'
 #' @param x
 #' @param y
@@ -63,8 +64,7 @@ fitLms <- function(x, y, cond, covs=NULL, filter=T){
 
     mm <- cbind(
         mm,
-        "wtm" = wtm,
-        "u"   = rank(mm[,3])/nrow(mm)
+        "wtm" = wtm
     )
 
     rownames(mm) <- colnames(yy)
@@ -74,6 +74,8 @@ fitLms <- function(x, y, cond, covs=NULL, filter=T){
         mm <- mm[which(mm[,"wtm"] < 0),]
 
     }
+
+    mm <- cbind(mm, "u"=rank(mm[,3])/nrow(mm))
 
     return(mm)
 
