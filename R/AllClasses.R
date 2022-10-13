@@ -2,8 +2,6 @@
 
 #' @import methods
 #' @export
-NULL
-
 .prodeInput <- setClass(
     Class = "prodeInput",
     slots = representation(
@@ -15,6 +13,8 @@ NULL
 
 # Object Constructor -----------------------------------------------------------
 
+#' @import methods
+#' @export
 getProdeInput <- function(score_matrix, col_data, design, edge_table){
 
     # TODO: implement all checks on col_data
@@ -58,8 +58,6 @@ getProdeInput <- function(score_matrix, col_data, design, edge_table){
 
 #' @import methods
 #' @export
-NULL
-
 prodeResults <- setClass(
     Class = "prodeResults",
     slots = representation(
@@ -71,6 +69,8 @@ prodeResults <- setClass(
 
 # Object Constructor -----------------------------------------------------------
 
+#' @import methods
+#' @export
 prodeResults <- function(output_df, adj_m, filteredData){
 
     new("prodeResults", output_df, adjMatrix=adj_m, filteredData=filteredData)
