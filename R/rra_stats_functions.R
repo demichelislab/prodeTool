@@ -15,23 +15,11 @@
     return(mm)
 }
 
-# .getAllEcdfs <- function(back_dis, g2deg){
-#     all_ecdfs <- apply(back_dis, 2, function(x){
-#         stats::ecdf(x)
-#     })
-#     names(all_ecdfs) <- sort(unique(g2deg))
-#     all_ecdfs
-# }
-
 .runBetaReal <- function(x, rr_v){
     re <- sort(rr_v[which(x!=0)], method="quick")
     ps <- stats::pbeta(re, 1:length(re), length(re) - 1:length(re) + 1)
     min(ps, na.rm=T)
 }
-
-# .runBetaPval <- function(x, score, all_ecdfs){ # one can also do mean > x
-#     all_ecdfs[[as.character(sum(x!=0))]](score)
-# }
 
 .runBetaPval <- function(x, score, back_dis){ # empricial p-valeu
     mean(back_dis[,as.character(sum(x!=0))] <= score)
@@ -39,16 +27,7 @@
 
 # Main functions ---------------------------------------------------------------
 
-#' Runs linear models on input data
-#'
-#' @param degs
-#' @param n_iter
-#' @param nn
-#'
-#' @return matrix with summary statistics of each fit
-#' @export
-#'
-#' @examples
+
 getRandomBetas <- function(adj_m, n_iter){
 
     degs <- Matrix::rowSums(adj_m)
@@ -62,16 +41,6 @@ getRandomBetas <- function(adj_m, n_iter){
 }
 
 
-#' Runs linear models on input data
-#'
-#' @param x
-#' @param y
-#' @param covs
-#'
-#' @return matrix with summary statistics of each fit
-#' @export
-#'
-#' @examples
 getRandomBetasPar <- function(adj_m, n_iter, cores=1){
 
     degs <- Matrix::rowSums(adj_m)
@@ -88,16 +57,6 @@ getRandomBetasPar <- function(adj_m, n_iter, cores=1){
 
 }
 
-#' Runs linear models on input data
-#'
-#' @param x
-#' @param y
-#' @param covs
-#'
-#' @return matrix with summary statistics of each fit
-#' @export
-#'
-#' @examples
 getRealBetas <- function(bet_tab, adj_m, back_dis){
 
         rr_v <- rank(bet_tab[,"t value"])/nrow(bet_tab)

@@ -18,16 +18,6 @@
 
 # Main function ----------------------------------------------------------------
 
-#' Runs linear models on given as input a prode object.
-#'
-#' @param x
-#' @param y
-#' @param covs
-#'
-#' @return matrix with summary statistics of each fit
-#' @export
-#'
-#' @examples
 fitLms <- function(x, y){
 
     # Fit all models

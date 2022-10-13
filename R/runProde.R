@@ -1,3 +1,4 @@
+#' @export
 runProde <- function(prodeInput, cores=1, filterCtrl = T, n_iter=10000){
 
     start <- Sys.time()
