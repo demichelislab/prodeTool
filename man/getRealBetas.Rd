@@ -4,7 +4,7 @@
 \alias{getRealBetas}
 \title{Runs linear models on input data}
 \usage{
-getRealBetas(rr_v, adj_mat, back_dis, g2deg)
+getRealBetas(bet_tab, adj_m, back_dis)
 }
 \arguments{
 \item{covs}{}

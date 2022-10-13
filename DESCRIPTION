@@ -8,17 +8,22 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
+Depends: 
+    S4Vectors,
+    SummarizedExperiment
 Imports: 
     devtools,
     stats,
     testthat, 
-    SummarizedExperiment
+    methods,
+    S4Vectors,
+    SummarizedExperiment, 
+    Matrix
 Config/testthat/edition: 3
 Collate: 
-    'class.R'
-    'AccessorsClassProdeInput.R'
     'AllClasses.R'
+    'AccessorsClassProdeInput.R'
     'linear_models_fit_functions.R'
     'rra_stats_functions.R'
+    'runProde.R'
     'utils.R'
-    'wrapper_prode_run_function.R'

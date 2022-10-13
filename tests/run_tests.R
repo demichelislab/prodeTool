@@ -1,101 +1,48 @@
-# library(devtools)
-# install()
-# library(prodeTool)
-#
-# # SAMPLE RUN ===================================================================
-#
-# N_GENES = 10000
-# N_SAMPLES = 10
-#
-# gr <- data.frame(
-#     n1 =  sample(paste0("YY", 1:(N_GENES-1)), N_GENES*100, replace=T),
-#     n2 =  sample(paste0("YY", 1:N_GENES), N_GENES*100, replace=T)
-# )
-#
-# mis <- paste0("YY", N_GENES)
-#
-# .getAdjMatr2 <- function(etab, gns){
-#
-#     gns2n <- 1:length(gns)
-#     names(gns2n) <- gns
-#
-#     etab <- as.matrix(etab[which(etab[,1]%in%gns & etab[,2]%in%gns),])
-#
-#     mm <- matrix(0, length(gns), length(gns))
-#     colnames(mm) <- rownames(mm) <- gns
-#     mm[etab] <- 1
-#     return(mm)
-# }
-#
-# .getAdjMatr3 <- function(etab, gns){
-#
-#     gns2n <- 1:length(gns)
-#     names(gns2n) <- gns
-#
-#     idxm <- cbind(
-#         c(as.numeric(gns2n[etab[,1]]), as.numeric(gns2n[etab[,2]]), 1:length(gns)),
-#         c(as.numeric(gns2n[etab[,2]]), as.numeric(gns2n[etab[,1]]), length(gns):1)
-#     )
-#
-#     idxm <- idxm[complete.cases(idxm), ]
-#
-#     mm <- Matrix(0, length(gns), length(gns))
-#     colnames(mm) <- rownames(mm) <- gns
-#     mm[idxm] <- 1
-#     return(mm)
-# }
-#
-# etab <- gr
-#
-# mm1 <- .getAdjMatr3(etab, paste0("YY", 1:(N_GENES)))
-# mm2 <- .getAdjMatr2(etab, paste0("YY", 1:(N_GENES)))
-#
-#
-#
-# adj <- .getAdjMatr(gr, paste0("YY", 1:(N_GENES-1)))
-#
-# dim(adj)
-#
-# adj2 <- Matrix(adj)
-#
-# ds <-
-#     matrix(
-#         rnorm(N_GENES*N_SAMPLES),
-#         nrow=N_GENES
-#     )
-#
-# rownames(ds) <- paste0("YY", 1:N_GENES)
-# colnames(ds) <- paste0("S", 1:ncol(ds))
-#
-# dm <- data.frame(
-#     a = rep(c(1, 0), each=N_SAMPLES/2),
-#     b = sample(c("a", "b"), N_SAMPLES, replace=T)
-# )
-# rownames(dm) <- paste0("S", 1:ncol(ds))
-#
-# covs <- "b"
-# cond <- "a"
-#
-# prodeInput <- prepareProdeObject( # i can remove cores and filterCtrl
-#     scores_matrix  = ds,
-#     samples_info   = dm,
-#     condition      = cond,
-#     covariates     = covs,
-#     edge_table     = gr,
-#     cores          = 2,
-#     filterCtrl     = T
-# )
-#
-# proout <- runProde( # This has to be changed so that it takes object+formula+Padj.method+filterThreshold
-#     scores_matrix  = ds,
-#     columns_data   = dm,
-#     condition      = cond,
-#     covariates     = covs,
-#     edge_table     = gr,
-#     cores          = 2,
-#     filterCtrl     = T
-# )
-#
+# # library(devtools)
+# # install()
+# # library(prodeTool)
+# #
+# # # SAMPLE RUN ===================================================================
+# #
+# # N_GENES = 10000
+# # N_SAMPLES = 10
+# #
+# # gr <- data.frame(
+# #     n1 =  sample(paste0("YY", 1:(N_GENES-1)), N_GENES*100, replace=T),
+# #     n2 =  sample(paste0("YY", 1:N_GENES), N_GENES*100, replace=T)
+# # )
+# #
+# # ds <-
+# #     matrix(
+# #         rnorm(N_GENES*N_SAMPLES),
+# #         nrow=N_GENES
+# #     )
+# #
+# # rownames(ds) <- paste0("YY", 1:N_GENES)
+# # colnames(ds) <- paste0("S", 1:ncol(ds))
+# #
+# # dm <- data.frame(
+# #     a = rep(c(1, 0), each=N_SAMPLES/2),
+# #     b = sample(c("a", "b"), N_SAMPLES, replace=T)
+# # )
+# # rownames(dm) <- paste0("S", 1:ncol(ds))
+# #
+# # covs <- "b"
+# # cond <- "a"
+# #
+# # prodeInput <- getProdeInput( # i can remove cores and filterCtrl
+# #     score_matrix   = ds,
+# #     col_data       = dm,
+# #     design         = as.formula("~b+a"), # considers the last variable
+# #     edge_table     = gr
+# # )
+# #
+# # output <- runProde(
+# #     prodeInput  = prodeInput,
+# #     n_iter      = 10000,
+# #     cores       = 1,
+# #     filterCtrl  = T
+# # )
 #
 # # Test this prode version on real data -----------------------------------------
 #
@@ -109,10 +56,7 @@
 # # Load depmap data -------------------------------------------------------------
 #
 # dep_data <- readRDS(paste0(roo,"./db/depmap_data_processed/depmap22Q1_complete_all_models_expression.rds"))
-#
 # dttmp <- fread(paste0(roo, "./db/ppin_data/edge_list_combined_400_genes.txt"), data.table=F)
-#
-# mm <- .getAdjMatr3(etab = dttmp, gns=colnames(dep_data[[2]]))
 #
 # # Select 9p21.3 loss models ----------------------------------------------------
 #
@@ -174,23 +118,31 @@
 # # subset graph and beta to same gns ............................................
 # # This part can be included in the object creation before running prode.
 #
-# all_gns <- unique(unlist(dttmp))
-# common <- intersect(all_gns, rownames(score_matr))
-# score_matr <- score_matr[common,]
-# dttmp <- dttmp[which(dttmp$gene1%in%common & dttmp$gene2%in%common),]
+# # all_gns <- unique(unlist(dttmp))
+# # common <- intersect(all_gns, rownames(score_matr))
+# # score_matr <- score_matr[common,]
+# # dttmp <- dttmp[which(dttmp$gene1%in%common & dttmp$gene2%in%common),]
 # score_matr[which(is.na(score_matr))] <- 0
 #
 # # ..............................................................................
 #
-# out <- prodeTool::runProde(
-#     scores_matrix  = score_matr,
-#     columns_data   = design_matr,
-#     condition      = "group",
-#     covariates     = covs,
-#     edge_table     = dttmp,
-#     cores          = 1,
-#     filterCtrl     = T
+# prodeInput <- getProdeInput( # i can remove cores and filterCtrl
+#     score_matrix   = score_matr,
+#     col_data       = design_matr,
+#     design         = as.formula("~lineage+msi+culture_type+group"), # considers the last variable
+#     edge_table     = dttmp
 # )
+#
+# output <- runProde(
+#     prodeInput  = prodeInput,
+#     n_iter      = 10000,
+#     cores       = 1,
+#     filterCtrl  = T
+# )
+#
+#
+# out <- results(output)
+# rownames(out) <- out$gene
 #
 # dd <- fread(
 #     paste0(

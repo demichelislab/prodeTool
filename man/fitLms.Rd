@@ -2,9 +2,9 @@
 % Please edit documentation in R/linear_models_fit_functions.R
 \name{fitLms}
 \alias{fitLms}
-\title{Runs linear models on input data}
+\title{Runs linear models on given as input a prode object.}
 \usage{
-fitLms(x, y, cond, covs = NULL, filter = T)
+fitLms(x, y)
 }
 \arguments{
 \item{covs}{}
@@ -13,5 +13,5 @@ fitLms(x, y, cond, covs = NULL, filter = T)
 matrix with summary statistics of each fit
 }
 \description{
-Runs linear models on input data
+Runs linear models on given as input a prode object.
 }

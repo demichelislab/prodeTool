@@ -4,10 +4,10 @@
 \alias{getRandomBetas}
 \title{Runs linear models on input data}
 \usage{
-getRandomBetas(degs, n_iter, nn)
+getRandomBetas(adj_m, n_iter)
 }
 \arguments{
-\item{covs}{}
+\item{nn}{}
 }
 \value{
 matrix with summary statistics of each fit
