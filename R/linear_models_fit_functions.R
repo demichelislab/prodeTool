@@ -1,40 +1,19 @@
 # helper functions -------------------------------------------------------------
 
-.prepareDataForFit <- function(x, yy){
-    data.frame(
-        yy, x
-    )
-}
-
-.prepareFormula <- function(cond, covs, yy){
-    stats::formula(
-        paste0(
-            "yy~",
-            paste(
-                c(cond,
-                  covs),
-                collapse="+"
-            )
-        )
-    )
-}
-
-.fitModels <- function(formula, dat, yy){
+.fitModels <- function(yy, x){
     summary(stats::lm(
-        formula,
-        data=dat,
-        method="qr"
+        yy~x
     ))
 }
 
 .extractCoefs <- function(fits){
     lapply(fits, function(fit)
-        fit[[4]][2,]
+        fit[[4]][nrow(fit[[4]]),]
     )
 }
 
-.addStats <- function(x,y,cv){
-    rowMeans(y[,which(x[,cv] == 0)])
+.addStats <- function(y,x){
+    rowMeans(y[,which(x[,ncol(x)] == 0)])
 }
 
 # Main function ----------------------------------------------------------------
@@ -49,15 +28,13 @@
 #' @export
 #'
 #' @examples
-fitLms <- function(x, y, cond, covs=NULL, filter=T){
+fitLms <- function(x, y){
 
     # Fit all models
     yy      <- t(y)
-    dat     <- .prepareDataForFit(x,yy)
-    form    <- .prepareFormula(cond, covs, yy)
-    fits    <- .fitModels(form, dat, yy)
+    fits    <- .fitModels(yy,x)
     coefs   <- .extractCoefs(fits)
-    wtm     <- .addStats(x,y,cond)
+    wtm     <- .addStats(y,x)
 
     # Prepare output matrix
     mm <- do.call(rbind, coefs)
@@ -68,14 +45,6 @@ fitLms <- function(x, y, cond, covs=NULL, filter=T){
     )
 
     rownames(mm) <- colnames(yy)
-
-    if (filter){
-
-        mm <- mm[which(mm[,"wtm"] < 0),]
-
-    }
-
-    mm <- cbind(mm, "u"=rank(mm[,3])/nrow(mm))
 
     return(mm)
 

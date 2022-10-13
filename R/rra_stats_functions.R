@@ -1,13 +1,13 @@
 # Helper functions -------------------------------------------------------------
 
-.runBetaRan1 <- function(ll, n_iter, nn){
+.runBetaRan1 <- function(ll, n_iter){
     ran <- matrix(.vRunif(rep(ll, n_iter)), nrow=1)
     #ran <- matrix(.vSample(nn, rep(ll, n_iter)), nrow=1)/nn
     pb  <- stats::pbeta(ran, 1:ll, ll - 1:ll + 1)
     return(t(pb))
 }
 
-.runBetaRan <- function(ll, n_iter, nn){
+.runBetaRan <- function(ll, n_iter){
     ran <- .colSort(.vRunif(rep(ll, n_iter)))
     #ran <- .colSort(.vSample(nn, rep(ll, n_iter)))/nn
     pb  <- stats::pbeta(ran, 1:ll, ll - 1:ll + 1)
@@ -49,13 +49,14 @@
 #' @export
 #'
 #' @examples
-getRandomBetas <- function(degs, n_iter, nn){
+getRandomBetas <- function(adj_m, n_iter){
 
+    degs <- Matrix::rowSums(adj_m)
     sapply(sort(unique(degs)), function(ll){
         if (ll == 1){
-            .runBetaRan1(ll, n_iter, nn)
+            .runBetaRan1(ll, n_iter)
         } else {
-            .runBetaRan(ll, n_iter, nn)
+            .runBetaRan(ll, n_iter)
         }
     }, simplify=T)
 }
@@ -71,15 +72,16 @@ getRandomBetas <- function(degs, n_iter, nn){
 #' @export
 #'
 #' @examples
-getRandomBetasPar <- function(degs, n_iter, nn, cores=1){
+getRandomBetasPar <- function(adj_m, n_iter, cores=1){
 
+    degs <- Matrix::rowSums(adj_m)
     do.call(cbind,
             parallel::mclapply(sort(unique(degs)), function(ll){
 
         if (ll == 1){
-            .runBetaRan1(ll, n_iter, nn)
+            .runBetaRan1(ll, n_iter)
         } else {
-            .runBetaRan(ll, n_iter, nn)
+            .runBetaRan(ll, n_iter)
         }
 
     }, mc.cores=cores))
@@ -96,10 +98,12 @@ getRandomBetasPar <- function(degs, n_iter, nn, cores=1){
 #' @export
 #'
 #' @examples
-getRealBetas <- function(rr_v, adj_mat, back_dis, g2deg){
+getRealBetas <- function(bet_tab, adj_m, back_dis){
 
-        colnames(back_dis) <- sort(unique(g2deg))
-        pbs <- apply(adj_mat, 1, function(x){
+        rr_v <- rank(bet_tab[,"t value"])/nrow(bet_tab)
+        degs <- Matrix::rowSums(adj_m)
+        colnames(back_dis) <- sort(unique(degs))
+        pbs <- apply(adj_m, 1, function(x){
 
             score <- .runBetaReal(x, rr_v)
             p.val <- .runBetaPval(x, score, back_dis)

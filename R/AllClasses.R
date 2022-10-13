@@ -1,19 +1,26 @@
-# All classes ==================================================================
+# Class prode Input ============================================================
+
+#' @import methods
+#' @export
+NULL
 
 .prodeInput <- setClass(
     Class = "prodeInput",
     slots = representation(
-        adjMatrix  = "Matrix",
-        degLookup  = "integer"
+        design     = "ANY",
+        adjMatrix  = "Matrix"
     ),
     contains="SummarizedExperiment"
 )
 
-# Object Constructor ...........................................................
+# Object Constructor -----------------------------------------------------------
 
-getProdeInput <- function(score_matrix, col_data, edge_table){
+getProdeInput <- function(score_matrix, col_data, design, edge_table){
 
     # TODO: implement all checks on col_data
+    # TODO: remove the adjacency matrix
+
+    ## Input check .............................................................
 
     .inputCheck(
         score_matrix = score_matrix,
@@ -21,12 +28,18 @@ getProdeInput <- function(score_matrix, col_data, edge_table){
         edge_table   = edge_table
     )
 
+    design <- stats::model.matrix.default(design, as.data.frame(col_data))
+
+    ## Get adjMatr .............................................................
+
     adj_m <- .getAdjMatr(
         etab = edge_table,
         gns  = rownames(score_matrix)
     )
 
-    degLookup <- .getDegLookup(adj_m)
+    stopifnot(.checkBetAdj(score_matrix, adj_m))
+
+    ## Class Construction ......................................................
 
     se <- SummarizedExperiment::SummarizedExperiment(
         assays     = list(score_matrix = score_matrix),
@@ -35,13 +48,34 @@ getProdeInput <- function(score_matrix, col_data, edge_table){
 
     .prodeInput(
         se,
-        adjMatrix  = adj_m,
-        degLookup  = degLookup
+        design     = design,
+        adjMatrix  = adj_m
     )
 
 }
 
+# Class prode results ==========================================================
 
+#' @import methods
+#' @export
+NULL
+
+prodeResults <- setClass(
+    Class = "prodeResults",
+    slots = representation(
+        adjMatrix     = "Matrix",
+        filteredData  = "DFrame"
+    ),
+    contains = "DFrame"
+)
+
+# Object Constructor -----------------------------------------------------------
+
+prodeResults <- function(output_df, adj_m, filteredData){
+
+    new("prodeResults", output_df, adjMatrix=adj_m, filteredData=filteredData)
+
+}
 
 
 

@@ -1,11 +1,5 @@
 # ------------------------------------------------------------------------------
 
-# helper functions
-
-.getDegLookup <- function(adj_mat){
-    rowSums(adj_mat > 0)
-}
-
 .checkAdjMatr <- function(all_gns_adj, all_gns_sco){
 
     if (!all(all_gns_sco%in%all_gns_adj)){
@@ -14,48 +8,19 @@
 
 }
 
-# .filterMatr <- function(mm, gns){
-#
-#     if (!nrow(mm)==ncol(mm)){
-#         mis <- gns[which(!gns%in%colnames(mm))]
-#         mm  <- cbind(mm, rep(0, nrow(mm)))
-#         colnames(mm)[ncol(mm)] <- mis
-#     }
-#
-#     mm[gns,gns]
-#
-# }
-#
-# .getAdjMatr <- function(etab, gns){
-#
-#     mm <- Matrix((unclass(table(etab)) > 0)*1)
-#
-#     .checkAdjMatr(
-#         rownames(mm),
-#         gns
-#     )
-#
-#     mm <- .filterMatr(
-#         mm,
-#         gns
-#     )
-#
-#     return(mm)
-# }
-
 .getAdjMatr <- function(etab, gns){
 
     gns2n <- 1:length(gns)
     names(gns2n) <- gns
 
     idxm <- cbind(
-        c(as.numeric(gns2n[etab[,1]]), as.numeric(gns2n[etab[,2]]), 1:length(gns)),
-        c(as.numeric(gns2n[etab[,2]]), as.numeric(gns2n[etab[,1]]), length(gns):1)
+        c(as.numeric(gns2n[etab[,1]]), as.numeric(gns2n[etab[,2]]),1:length(gns)),
+        c(as.numeric(gns2n[etab[,2]]), as.numeric(gns2n[etab[,1]]),1:length(gns))
     )
 
-    idxm <- idxm[complete.cases(idxm), ]
+    idxm <- idxm[stats::complete.cases(idxm), ]
 
-    mm <- Matrix(0, length(gns), length(gns))
+    mm <- Matrix::Matrix(0, length(gns), length(gns))
     colnames(mm) <- rownames(mm) <- gns
     mm[idxm] <- 1
     return(mm)
@@ -74,10 +39,9 @@
     deg[-which(deg == 0)]
 }
 
-.checkBetAdjDeg <- function(beta_tab, adj_mat, deg){
+.checkBetAdj <- function(beta_tab, adj_mat, deg){
     all(rownames(beta_tab) == rownames(adj_mat)) &
-    all(rownames(beta_tab) == colnames(adj_mat)) &
-    all(rownames(beta_tab) == names(deg))
+    all(rownames(beta_tab) == colnames(adj_mat))
 }
 
 .vRunif <- Vectorize(function(n){
@@ -89,13 +53,12 @@
 }, "s")
 
 .colSort <- function(x){
-    #apply(x, 2, sort, method="quick")
-    Rfast::colSort(x)
+    apply(x, 2, sort, method="quick")
 }
 
 
 .inputCheck <- function(
-    score_matrix, col_data, edge_table
+    score_matrix, col_data, design, edge_table
 ){
 
     if (!is.matrix(score_matrix)){
@@ -125,6 +88,9 @@
     if (!all(rownames(col_data) %in% colnames(score_matrix))){
         stop("Sample info file has different sample ids than scores matrix.")
     }
+
+    # Input design -------------------------------------------------------------
+    #TODO: check input for design formula
 
     # # Input condition ----------------------------------------------------------
     #

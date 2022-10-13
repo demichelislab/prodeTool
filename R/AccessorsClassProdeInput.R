@@ -1,6 +1,8 @@
 #' @import methods
-#' @include class.R
+#' @include AllClasses.R
 NULL
+
+# Accessors for ProdeInput ??===================================================
 
 #' @rdname adjMatrix
 #' @usage NULL
@@ -13,13 +15,59 @@ setGeneric("adjMatrix", function(object) standardGeneric("adjMatrix"))
 setMethod("adjMatrix", signature = "prodeInput",
           definition = function(object) object@adjMatrix)
 
-#' @rdname NodeDegreeLookup
+#' @rdname designMatrix
 #' @usage NULL
 #' @export
-setGeneric("NodeDegreeLookup", function(object) standardGeneric("NodeDegreeLookup"))
+setGeneric("designMatrix", function(object) standardGeneric("designMatrix"))
 
-#' @rdname NodeDegreeLookup
+#' @rdname designMatrix
 #' @aliases adjMatrix
 #' @usage NULL
-setMethod("NodeDegreeLookup", signature = "prodeInput",
-          definition = function(object) object@degLookup)
+setMethod("designMatrix", signature = "prodeInput",
+          definition = function(object) object@design)
+
+#' @rdname filterAdjMatrix
+#' @usage NULL
+#' @export
+setGeneric("filterAdjMatrix", function(object, ...) standardGeneric("filterAdjMatrix"))
+
+#' @rdname filterAdjMatrix
+#' @aliases filterAdjMatrix
+#' @usage NULL
+setMethod("filterAdjMatrix", signature = "prodeInput",
+          definition = function(object, nms) object@adjMatrix[nms,nms])
+
+# Accessors for ProdeResults ===================================================
+
+#' @rdname results
+#' @usage NULL
+#' @export
+setGeneric("results", function(object) standardGeneric("results"))
+
+#' @rdname results
+#' @aliases filterNodesDegree
+#' @usage NULL
+setMethod("results", signature = "prodeResults",
+          definition = function(object) as.data.frame(object))
+
+#' @rdname adjMatrixResults
+#' @usage NULL
+#' @export
+setGeneric("adjMatrixResults", function(object) standardGeneric("adjMatrixResults"))
+
+#' @rdname adjMatrixResults
+#' @aliases adjMatrixResults
+#' @usage NULL
+setMethod("adjMatrixResults", signature = "prodeResults",
+          definition = function(object) object@adjMatrix)
+
+#' @rdname filteredGenes
+#' @usage NULL
+#' @export
+setGeneric("filteredGenes", function(object) standardGeneric("filteredGenes"))
+
+#' @rdname filteredGenes
+#' @aliases filterNodesDegree
+#' @usage NULL
+setMethod("filteredGenes", signature = "prodeResults",
+          definition = function(object) object@filteredData)
