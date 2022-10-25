@@ -2,13 +2,14 @@ Package: prodeTool
 Title: Prode Tool 
 Version: 0.0.0.9000
 Authors@R: 
-    person("Jane", "Doe", , "jane@example.com", role = c("aut", "cre"))
+    person("Thomas", "Cantore", , "thomas.cantore@unitn.it", role = c("aut", "cre"))
 Description: proDe tool.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Depends: 
+    R (>= 2.10),
     S4Vectors,
     SummarizedExperiment
 Imports: 
@@ -16,9 +17,8 @@ Imports:
     stats,
     testthat, 
     methods,
-    S4Vectors,
-    SummarizedExperiment, 
     Matrix
+Suggests: testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Collate: 
     'AllClasses.R'
@@ -27,3 +27,4 @@ Collate:
     'rra_stats_functions.R'
     'runProde.R'
     'utils.R'
+LazyData: true

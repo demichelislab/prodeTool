@@ -26,13 +26,12 @@
     return(mm)
 }
 
-
 .filter0DegAdj <- function(adj_mat, deg){ # this will be a method of object
-    adj_mat[-which(deg == 0), -which(deg == 0)]
+    adj_mat[-which(deg == 1), -which(deg == 1)]
 }
 
 .filter0DegBet <- function(beta_tab, deg){
-    beta_tab[-which(deg == 0),]
+    beta_tab[-which(deg == 1),]
 }
 
 .filterDeg <- function(deg){

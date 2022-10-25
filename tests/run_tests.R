@@ -1,51 +1,52 @@
-# # library(devtools)
-# # install()
-# # library(prodeTool)
-# #
-# # # SAMPLE RUN ===================================================================
-# #
-# # N_GENES = 10000
-# # N_SAMPLES = 10
-# #
-# # gr <- data.frame(
-# #     n1 =  sample(paste0("YY", 1:(N_GENES-1)), N_GENES*100, replace=T),
-# #     n2 =  sample(paste0("YY", 1:N_GENES), N_GENES*100, replace=T)
-# # )
-# #
-# # ds <-
-# #     matrix(
-# #         rnorm(N_GENES*N_SAMPLES),
-# #         nrow=N_GENES
-# #     )
-# #
-# # rownames(ds) <- paste0("YY", 1:N_GENES)
-# # colnames(ds) <- paste0("S", 1:ncol(ds))
-# #
-# # dm <- data.frame(
-# #     a = rep(c(1, 0), each=N_SAMPLES/2),
-# #     b = sample(c("a", "b"), N_SAMPLES, replace=T)
-# # )
-# # rownames(dm) <- paste0("S", 1:ncol(ds))
-# #
-# # covs <- "b"
-# # cond <- "a"
-# #
-# # prodeInput <- getProdeInput( # i can remove cores and filterCtrl
-# #     score_matrix   = ds,
-# #     col_data       = dm,
-# #     design         = as.formula("~b+a"), # considers the last variable
-# #     edge_table     = gr
-# # )
-# #
-# # output <- runProde(
-# #     prodeInput  = prodeInput,
-# #     n_iter      = 10000,
-# #     cores       = 1,
-# #     filterCtrl  = T
-# # )
+# library(devtools)
+# install()
+# library(prodeTool)
 #
-# # Test this prode version on real data -----------------------------------------
+# # SAMPLE RUN ===================================================================
+# #
+# N_GENES = 100
+# N_SAMPLES = 10
 #
+# gr <- data.frame(
+#     n1 =  sample(paste0("YY", 1:(N_GENES-1)), N_GENES*100, replace=T),
+#     n2 =  sample(paste0("YY", 1:N_GENES), N_GENES*100, replace=T)
+# )
+#
+# ds <-
+#     matrix(
+#         rnorm(N_GENES*N_SAMPLES),
+#         nrow=N_GENES
+#     )
+#
+# rownames(ds) <- paste0("YY", 1:N_GENES)
+# colnames(ds) <- paste0("S", 1:ncol(ds))
+#
+# dm <- data.frame(
+#     a = rep(c(1, 0), each=N_SAMPLES/2),
+#     b = sample(c("a", "b"), N_SAMPLES, replace=T)
+# )
+# rownames(dm) <- paste0("S", 1:ncol(ds))
+#
+# covs <- "b"
+# cond <- "a"
+#
+# prodeInput <- getProdeInput( # i can remove cores and filterCtrl
+#     score_matrix   = ds,
+#     col_data       = dm,
+#     design         = as.formula("~b+a"), # considers the last variable
+#     edge_table     = gr
+# )
+#
+# output <- runProde(
+#     prodeInput  = prodeInput,
+#     n_iter      = 10000,
+#     cores       = 1,
+#     filterCtrl  = T,
+#     extendedStats = F
+# )
+# #
+# # # Test this prode version on real data -----------------------------------------
+# #
 # roo <- c("~/shares/CIBIO-Storage/CO/SPICE/thomas/proDe_v2/")
 #
 # source(paste0(roo, "./code/utils/_imports_.R"))
@@ -140,7 +141,92 @@
 #     filterCtrl  = T
 # )
 #
+# res <- results(output)
+# adj_m <- adjMatrixResults(output)
 #
+# # try to normalize rank score across n .........................................
+#
+# res %>%
+#     ggplot() +
+#     geom_point(
+#         aes(
+#             x=node_degree,
+#             y=-log10(p.value)
+#         ), fill='blue'
+#     )
+#
+# res %>%
+#     filter(fdr <= 0.01) %>%
+#     ggplot() +
+#     geom_histogram(
+#         aes(
+#             x=rra_score
+#         )
+#     )
+#
+#
+#
+#
+# .runBetaRan <- function(ll, n_iter){
+#     ran <- .colSort(.vRunif(rep(ll, n_iter)))
+#     #ran <- .colSort(.vSample(nn, rep(ll, n_iter)))/nn
+#     pb  <- stats::pbeta(ran, 1:ll, ll - 1:ll + 1)
+#     mm  <- apply(pb, 2, min)
+#     return(mm)
+# }
+#
+# back_rand <- vapply(sort(unique(res$node_degree)), function(i) mean(.runBetaRan(i, 100)), 0.1)
+# names(back_rand) <- sort(unique(res$node_degree))
+# res$eff_size <- log2(res$rra_score / back_rand[as.character(res$node_degree)])
+#
+# plot(
+#     x=res$eff_size,
+#     y=res$node_degree
+# )
+#
+# plot(
+#     x=res$eff_size,
+#     y=-log10(res$p.value)
+# )
+#
+# colnames(back_rand) <- c('i', 'b')
+#
+# back_rand %>%
+#     ggplot() +
+#     geom_point(
+#         aes(
+#             x=i,
+#             y=b
+#         )
+#     )
+#
+# MASS::rlm(b~log(i), data=back_rand)
+#
+# fit <- lm(mean_rank~log(node_degree)+I(log(node_degree^2)), data=res)
+#
+# plot(
+#     res$mean_rank,
+#     log(res$node_degree)
+# )
+# lines(
+#     fit$fitted.values,
+#     res$node_degree,
+#     col='red'
+# )
+#
+# sco <- residuals(fit)
+#
+# res %>%
+#     ggplot()+
+#     geom_point(
+#         aes(
+#             x=rra_score,
+#             y=
+#         )
+#     )
+#
+#
+# #
 # out <- results(output)
 # rownames(out) <- out$gene
 #
@@ -171,112 +257,112 @@
 #     abline(a = 0, b=1, col="red")
 # }
 #
-# plot(
-#     x=dd[cc,"u"],
-#     y=out[cc,"u"]
-# )
-#
-# plot(
-#     x=dd[cc,"score_rra"],
-#     y=out[cc,"rra_score"]
-# )
-#
-# plot(
-#     x=dd[cc,"beta"],
-#     y=out[cc,"Estimate"]
-# )
-#
-#
-#
-# adj <- fread(  "~/shares/CIBIO-Storage/CO/SPICE/thomas/proDe_v2/data/06_validation_inhouse_isogenic_lines/adj_matrix_9p21.txt")
-# adj <- as.matrix(adj)
-# rownames(adj) <- colnames(adj)
-#
-# head(adj[1:10,1:10])
-# diag(adj) <- 1
-# head(adj[,1:10])
-#
-# adj <- adj[-which(rownames(adj) == "GFY"), -which(rownames(adj) == "GFY")]
-# #adj <- adj[rownames(adj_mat), colnames(adj_mat)]
-#
-# all(rownames(adj) == rownames(adj_mat))
-# all(adj == adj_mat)
-#
-# nn <- rowSums(adj[cc,cc])
-# mm <- rowSums(adj_mat[cc,cc])
-#
-# plot(mm, nn)
-#
-#
-# # Check out computed pbs method ------------------------------------------------
-#
-# all(rownames(adj) == dd$gene)
-#
-# bet1 <- dd[-which(dd$gene=="GFY"),]
-# bet2 <- out[dd$gene[-which(dd$gene=="GFY")],]
-#
-# plot(
-#     bet1$beta_scaled,
-#     bet2$t.value
-# )
-# abline(a=0, b=1, col="red")
-#
-# plot(rank(dd$beta_scaled)/nrow(dd), dd$u)
-# abline(a=0, b=1, col="red")
-#
-# plot(rank(bet1$beta_scaled)/nrow(bet1), rank(bet2$t.value)/nrow(bet2))
-# plot(bet1$u, bet2$u)
-# abline(a=0, b=1, col="red")
-#
-# oo <- apply(adj, 1, function(nn){
-#
-#     re <- sort(bet$u[which(nn!=0)])
-#
-#     #rnks <- sort(bet$pval[which(nn!=0)])
-#
-#     ps <- pbeta(re, 1:length(re), length(re) - 1:length(re) + 1)
-#
-#     min(ps, na.rm=T)
-#
-# })
-#
-# hist(oo)
-#
-# {
-#     plot(oo, dd[rownames(adj),"score_rra"])
-#     abline(a=0, b=1, col="red")
-# }
-#
-#
-# dim(adj)
-# dim(out)
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
+# # plot(
+# #     x=dd[cc,"u"],
+# #     y=out[cc,"u"]
+# # )
+# #
+# # plot(
+# #     x=dd[cc,"score_rra"],
+# #     y=out[cc,"rra_score"]
+# # )
+# #
+# # plot(
+# #     x=dd[cc,"beta"],
+# #     y=out[cc,"Estimate"]
+# # )
+# #
+# #
+# #
+# # adj <- fread(  "~/shares/CIBIO-Storage/CO/SPICE/thomas/proDe_v2/data/06_validation_inhouse_isogenic_lines/adj_matrix_9p21.txt")
+# # adj <- as.matrix(adj)
+# # rownames(adj) <- colnames(adj)
+# #
+# # head(adj[1:10,1:10])
+# # diag(adj) <- 1
+# # head(adj[,1:10])
+# #
+# # adj <- adj[-which(rownames(adj) == "GFY"), -which(rownames(adj) == "GFY")]
+# # #adj <- adj[rownames(adj_mat), colnames(adj_mat)]
+# #
+# # all(rownames(adj) == rownames(adj_mat))
+# # all(adj == adj_mat)
+# #
+# # nn <- rowSums(adj[cc,cc])
+# # mm <- rowSums(adj_mat[cc,cc])
+# #
+# # plot(mm, nn)
+# #
+# #
+# # # Check out computed pbs method ------------------------------------------------
+# #
+# # all(rownames(adj) == dd$gene)
+# #
+# # bet1 <- dd[-which(dd$gene=="GFY"),]
+# # bet2 <- out[dd$gene[-which(dd$gene=="GFY")],]
+# #
+# # plot(
+# #     bet1$beta_scaled,
+# #     bet2$t.value
+# # )
+# # abline(a=0, b=1, col="red")
+# #
+# # plot(rank(dd$beta_scaled)/nrow(dd), dd$u)
+# # abline(a=0, b=1, col="red")
+# #
+# # plot(rank(bet1$beta_scaled)/nrow(bet1), rank(bet2$t.value)/nrow(bet2))
+# # plot(bet1$u, bet2$u)
+# # abline(a=0, b=1, col="red")
+# #
+# # oo <- apply(adj, 1, function(nn){
+# #
+# #     re <- sort(bet$u[which(nn!=0)])
+# #
+# #     #rnks <- sort(bet$pval[which(nn!=0)])
+# #
+# #     ps <- pbeta(re, 1:length(re), length(re) - 1:length(re) + 1)
+# #
+# #     min(ps, na.rm=T)
+# #
+# # })
+# #
+# # hist(oo)
+# #
+# # {
+# #     plot(oo, dd[rownames(adj),"score_rra"])
+# #     abline(a=0, b=1, col="red")
+# # }
+# #
+# #
+# # dim(adj)
+# # dim(out)
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
+# #
