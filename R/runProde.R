@@ -22,6 +22,8 @@ runProde <- function(prodeInput, cores=1, filterCtrl = T, n_iter=10000, extended
         extendedStats = extendedStats
     )
 
+    rownames(beta_tab) <- rownames(prodeInput)
+
     message("[2] Subsetting adj matrix and NodesDegree \t", Sys.time(), "\n")
 
     # TODO: improve filtering step by including it in an helper function
