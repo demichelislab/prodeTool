@@ -1,49 +1,53 @@
-# library(devtools)
-# install()
-# library(prodeTool)
-#
+library(devtools)
+install()
+library(prodeTool)
+# 
 # # SAMPLE RUN ===================================================================
 # #
 # N_GENES = 100
 # N_SAMPLES = 10
-#
+# 
 # gr <- data.frame(
 #     n1 =  sample(paste0("YY", 1:(N_GENES-1)), N_GENES*100, replace=T),
 #     n2 =  sample(paste0("YY", 1:N_GENES), N_GENES*100, replace=T)
 # )
-#
+# 
 # ds <-
 #     matrix(
 #         rnorm(N_GENES*N_SAMPLES),
 #         nrow=N_GENES
 #     )
-#
+# 
 # rownames(ds) <- paste0("YY", 1:N_GENES)
 # colnames(ds) <- paste0("S", 1:ncol(ds))
-#
+# 
 # dm <- data.frame(
 #     a = rep(c(1, 0), each=N_SAMPLES/2),
 #     b = sample(c("a", "b"), N_SAMPLES, replace=T)
 # )
+# 
 # rownames(dm) <- paste0("S", 1:ncol(ds))
-#
+# 
 # covs <- "b"
 # cond <- "a"
-#
+# 
 # prodeInput <- getProdeInput( # i can remove cores and filterCtrl
 #     score_matrix   = ds,
 #     col_data       = dm,
 #     design         = as.formula("~b+a"), # considers the last variable
 #     edge_table     = gr
 # )
-#
+# 
 # output <- runProde(
+# 
 #     prodeInput  = prodeInput,
-#     n_iter      = 10000,
-#     cores       = 1,
-#     filterCtrl  = T,
-#     extendedStats = F
+#     computeBack = F,
+#     filterCtrl  = F,
+#     extendedStats = F,
+#     scaledEst = F,
+#     runEss = T
 # )
+
 # #
 # # # Test this prode version on real data -----------------------------------------
 # #

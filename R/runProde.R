@@ -10,17 +10,35 @@
 #' @param extendedStats logical, wether to computee extended per-group
 #'     stats on score matrix.
 #' @export
-runProde <- function(prodeInput, cores=1, filterCtrl = T, n_iter=10000, extendedStats=F, computeBack=F){
+runProde <- function(
+    prodeInput, cores=1, 
+    filterCtrl = T, 
+    n_iter=10000, 
+    extendedStats=F, 
+    computeBack=F, 
+    scaledEst=T,
+    runEss=F
+){
 
     start <- Sys.time()
     message("\n\nRunning ProDe on ", nrow(assay(prodeInput)), " genes!\n\n")
     message("[1] Running Linear models fit \t\t\t", Sys.time(), "\n")
 
-    beta_tab <- fitLms( # fast fit linear models to each gene + covariates
+    if (runEss){
+      
+      beta_tab <- fitLmsEss( # fast fit linear models to each gene + covariates
+        y             = SummarizedExperiment::assay(prodeInput)
+      )
+      
+    } else {
+      
+      beta_tab <- fitLms( # fast fit linear models to each gene + covariates
         x             = designMatrix(prodeInput),
         y             = SummarizedExperiment::assay(prodeInput),
         extendedStats = extendedStats
-    )
+      )
+      
+    }
 
     rownames(beta_tab) <- rownames(prodeInput)
 
@@ -79,7 +97,9 @@ runProde <- function(prodeInput, cores=1, filterCtrl = T, n_iter=10000, extended
         real_betas <- getRealBetasFitDistr(
             bet_tab  = beta_tab,
             adj_m    = adj_m,
-            back_par = ww
+            back_par = ww, 
+            runEss = runEss, 
+            scaledEst = scaledEst
         )
 
     }

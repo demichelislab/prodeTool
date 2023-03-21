@@ -73,7 +73,19 @@ getRandomBetasPar <- function(adj_m, n_iter, cores=1){
 
 getRealBetas <- function(bet_tab, adj_m, back_dis){
 
-        rr_v <- rank(bet_tab[,"t value"])/nrow(bet_tab)
+  if (runEss){
+    if (scaledEst){
+      rr_v <- rank(bet_tab[,"t_value_ess"])/nrow(bet_tab)
+    } else {
+      rr_v <- rank(bet_tab[,"Estimate_ess"])/nrow(bet_tab)
+    }
+  } else {
+    if (scaledEst){
+      rr_v <- rank(bet_tab[,"t value"])/nrow(bet_tab)
+    } else {
+      rr_v <- rank(bet_tab[,"Estimate"])/nrow(bet_tab)
+    }
+  }
         degs <- Matrix::rowSums(adj_m)
         colnames(back_dis) <- sort(unique(degs))
         pbs <- apply(adj_m, 1, function(x){
@@ -97,9 +109,22 @@ getRealBetas <- function(bet_tab, adj_m, back_dis){
         )
 }
 
-getRealBetasFitDistr <- function(bet_tab, adj_m, back_par){
+getRealBetasFitDistr <- function(bet_tab, adj_m, back_par, runEss, scaledEst){
 
-    rr_v <- rank(bet_tab[,"t value"])/nrow(bet_tab)
+    if (runEss){
+      if (scaledEst){
+        rr_v <- rank(bet_tab[,"t_value_ess"])/nrow(bet_tab)
+      } else {
+        rr_v <- rank(bet_tab[,"Estimate_ess"])/nrow(bet_tab)
+      }
+    } else {
+      if (scaledEst){
+        rr_v <- rank(bet_tab[,"t value"])/nrow(bet_tab)
+      } else {
+        rr_v <- rank(bet_tab[,"Estimate"])/nrow(bet_tab)
+      }
+    }
+  
 
     pbs <- apply(adj_m, 1, function(x){
 
