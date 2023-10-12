@@ -11,34 +11,30 @@
 #'     stats on score matrix.
 #' @export
 runProde <- function(
-    prodeInput, cores=1, 
-    filterCtrl = T, 
-    n_iter=10000, 
-    extendedStats=F, 
-    computeBack=F, 
-    scaledEst=T,
-    runEss=F
+    prodeInput, cores=1,
+    filterCtrl = F,
+    n_iter=10000,
+    extendedNICEStats=F,
+    computeBack=F,
+    scaledEst=T
 ){
 
     start <- Sys.time()
     message("\n\nRunning ProDe on ", nrow(assay(prodeInput)), " genes!\n\n")
     message("[1] Running Linear models fit \t\t\t", Sys.time(), "\n")
 
-    if (runEss){
-      
-      beta_tab <- fitLmsEss( # fast fit linear models to each gene + covariates
-        y             = SummarizedExperiment::assay(prodeInput)
-      )
-      
-    } else {
-      
-      beta_tab <- fitLms( # fast fit linear models to each gene + covariates
-        x             = designMatrix(prodeInput),
-        y             = SummarizedExperiment::assay(prodeInput),
-        extendedStats = extendedStats
-      )
-      
+    if (modality(prodeInput) == 'NIE_score'){
+      # It is forced to FALSE in case of NIE scores
+      extendedNICEStats <- F
+      filterCtrl <- F
+
     }
+
+    beta_tab <- fitLms( # fast fit linear models to each gene + covariates
+      x                 = designMatrix(prodeInput),
+      y                 = SummarizedExperiment::assay(prodeInput),
+      extendedNICEStats = extendedNICEStats
+    )
 
     rownames(beta_tab) <- rownames(prodeInput)
 
@@ -48,7 +44,12 @@ runProde <- function(
     # Filtering based on mean of wild-type models
     filtered <-S4Vectors::DataFrame()
     if (filterCtrl){
-        keep     <- which(beta_tab[,"ctrl_mean"] < 0)
+        keep     <- which(
+          .getCtrlMean(
+            SummarizedExperiment::assay(prodeInput),
+            designMatrix(prodeInput)
+          ) < 0
+        )
         filtered <- beta_tab[-keep,]
         beta_tab <- beta_tab[ keep,]
     }
@@ -89,7 +90,8 @@ runProde <- function(
         real_betas <- getRealBetas(
             bet_tab  = beta_tab,
             adj_m    = adj_m,
-            back_dis = back_dis
+            back_dis = back_dis,
+            scaledEst = scaledEst
         )
 
     } else {
@@ -97,8 +99,7 @@ runProde <- function(
         real_betas <- getRealBetasFitDistr(
             bet_tab  = beta_tab,
             adj_m    = adj_m,
-            back_par = ww, 
-            runEss = runEss, 
+            back_par = ww,
             scaledEst = scaledEst
         )
 
@@ -112,9 +113,10 @@ runProde <- function(
     out <- S4Vectors::DataFrame(
         "gene" = rownames(beta_tab),
         beta_tab,
-        real_betas,
-        "node_degree" = c(Matrix::rowSums(adj_m)[rownames(beta_tab)])
+        real_betas
     )
+
+    colnames(out)[ncol(out)] <- modality(prodeInput)
 
     prodeResults(
         out,

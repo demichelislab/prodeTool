@@ -91,6 +91,24 @@
     # Input design -------------------------------------------------------------
     #TODO: check input for design formula
 
+    if (!is.null(design)){
+
+        if (!inherits(design,"formula")){
+            stop("Input design should be a formula, please pass it to formula()")
+        }
+
+        if (diff(dim(attr(terms(design), "factors"))) != 0){
+            stop(
+            paste0("Please check your formula, no left-side term is needed.\n",
+                 "Formula should be of the form: '~covariates'."))
+        }
+
+        if (!all(colnames(attr(terms(design), "factors")) %in% colnames(col_data))){
+            stop("Some variables in design formula are not in column data")
+        }
+
+    }
+
     # # Input condition ----------------------------------------------------------
     #
     # if (!condition%in%colnames(samples_info)){

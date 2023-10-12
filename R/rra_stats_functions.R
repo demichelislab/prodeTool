@@ -21,12 +21,12 @@
     min(ps, na.rm=T)
 }
 
-.runFracReal <- function(x, rr_v){
-    re <- sort(rr_v[which(x!=0)], method="quick")
-    ps <- stats::pbeta(re, 1:length(re), length(re) - 1:length(re) + 1)
-    idx <- which.min(ps)
-    mean(re[1:idx])
-}
+# .runFracReal <- function(x, rr_v){
+#     re <- sort(rr_v[which(x!=0)], method="quick")
+#     ps <- stats::pbeta(re, 1:length(re), length(re) - 1:length(re) + 1)
+#     idx <- which.min(ps)
+#     mean(re[1:idx])
+# }
 
 .runBetaPval <- function(x, score, back_dis){ # empricial p-valeu
     mean(back_dis[,as.character(sum(x!=0))] <= score)
@@ -37,6 +37,11 @@
     stats::pweibull(score, params[1], params[2])
 }
 
+.computeFinalScore <- function(u_gene, u_neig){
+
+  log(u_gene*u_neig)
+
+}
 
 # Main functions ---------------------------------------------------------------
 
@@ -71,80 +76,68 @@ getRandomBetasPar <- function(adj_m, n_iter, cores=1){
 
 }
 
-getRealBetas <- function(bet_tab, adj_m, back_dis){
+getRealBetas <- function(bet_tab, adj_m, back_dis, scaledEst){
 
-  if (runEss){
-    if (scaledEst){
-      rr_v <- rank(bet_tab[,"t_value_ess"])/nrow(bet_tab)
-    } else {
-      rr_v <- rank(bet_tab[,"Estimate_ess"])/nrow(bet_tab)
-    }
-  } else {
     if (scaledEst){
       rr_v <- rank(bet_tab[,"t value"])/nrow(bet_tab)
     } else {
       rr_v <- rank(bet_tab[,"Estimate"])/nrow(bet_tab)
     }
-  }
-        degs <- Matrix::rowSums(adj_m)
-        colnames(back_dis) <- sort(unique(degs))
-        pbs <- apply(adj_m, 1, function(x){
 
-            score <- .runBetaReal(x, rr_v)
-            frac  <- .runFracReal(x, rr_v)
-            p.val <- .runBetaPval(x, score, back_dis)
+    degs <- Matrix::rowSums(adj_m)
+    colnames(back_dis) <- sort(unique(degs))
+    pbs <- apply(adj_m, 1, function(x){
+        score <- .runBetaReal(x, rr_v)
+       # frac  <- .runFracReal(x, rr_v)
+        p.val <- .runBetaPval(x, score, back_dis)
+        c(score, p.val)
+    })
 
-            c(frac, p.val)
+    u_n <- rank(pbs[2,], na.last = 'keep') /
+      sum(!is.na(pbs[2,]))
 
-        })
-
-        mr <- (adj_m %*% rr_v)[,1]/degs
-
-        cbind(
-            "relative_rank" = rr_v,
-            "mean_rank"     = mr,
-            "rra_score"     = pbs[1,],
-            "p.value"       = pbs[2,],
-            "fdr"           = stats::p.adjust(pbs[2,], "fdr")
-        )
+    cbind(
+        "rra_score"     = pbs[1,],
+        "rra_p"         = pbs[2,],
+        "rra_fdr"       = stats::p.adjust(pbs[2,], "fdr"),
+        "u_gene"        = rr_v,
+        "u_neig"        = u_n,
+        'score'         = .computeFinalScore(rr_v, u_n)
+    )
 }
 
 getRealBetasFitDistr <- function(bet_tab, adj_m, back_par, runEss, scaledEst){
 
-    if (runEss){
-      if (scaledEst){
-        rr_v <- rank(bet_tab[,"t_value_ess"])/nrow(bet_tab)
-      } else {
-        rr_v <- rank(bet_tab[,"Estimate_ess"])/nrow(bet_tab)
-      }
+    if (scaledEst){
+      rr_v <- rank(bet_tab[,"t value"], na.last = 'keep')/sum(!is.na(bet_tab[,"t value"]))
     } else {
-      if (scaledEst){
-        rr_v <- rank(bet_tab[,"t value"])/nrow(bet_tab)
-      } else {
-        rr_v <- rank(bet_tab[,"Estimate"])/nrow(bet_tab)
-      }
+      rr_v <- rank(bet_tab[,"Estimate"], na.last = 'keep')/sum(!is.na(bet_tab[,"t value"]))
     }
-  
 
     pbs <- apply(adj_m, 1, function(x){
 
         score <- .runBetaReal(x, rr_v)
-        frac  <- .runFracReal(x, rr_v)
+        #frac  <- .runFracReal(x, rr_v)
         p.val <- .runBetaPvalFitDistr(x, score, back_par)
 
-        c(frac, p.val)
+        c(score, p.val)
 
     })
 
-    degs <- Matrix::rowSums(adj_m)
-    mr <- (adj_m %*% rr_v)[,1]/degs
+    #degs <- Matrix::rowSums(adj_m)
+    #mr <- (adj_m %*% rr_v)[,1]/degs
+
+    u_n <- rank(pbs[2,], na.last = 'keep') /
+      sum(!is.na(pbs[2,]))
 
     cbind(
-        "relative_rank" = rr_v,
-        "mean_rank"     = mr,
+        #"mean_rank"     = mr,
         "rra_score"     = pbs[1,],
-        "p.value"       = pbs[2,],
-        "fdr"           = stats::p.adjust(pbs[2,], "fdr")
+        "rra_p"         = pbs[2,],
+        "rra_fdr"       = stats::p.adjust(pbs[2,], "fdr"),
+        "u_gene"        = rr_v,
+        "u_neig"        = u_n,
+        'score'         = .computeFinalScore(rr_v, u_n)
     )
 }
 

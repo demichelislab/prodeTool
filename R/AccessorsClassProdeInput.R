@@ -2,7 +2,7 @@
 #' @include AllClasses.R
 NULL
 
-# Accessors for ProdeInput ??===================================================
+# Accessors for ProdeInput =====================================================
 
 #' @rdname adjMatrix
 #' @usage NULL
@@ -21,10 +21,21 @@ setMethod("adjMatrix", signature = "prodeInput",
 setGeneric("designMatrix", function(object) standardGeneric("designMatrix"))
 
 #' @rdname designMatrix
-#' @aliases adjMatrix
+#' @aliases designMatrix
 #' @usage NULL
 setMethod("designMatrix", signature = "prodeInput",
           definition = function(object) object@design)
+
+#' @rdname modality
+#' @usage NULL
+#' @export
+setGeneric("modality", function(object) standardGeneric("modality"))
+
+#' @rdname modality
+#' @aliases modality
+#' @usage NULL
+setMethod("modality", signature = "prodeInput",
+          definition = function(object) object@modality)
 
 #' @rdname filterAdjMatrix
 #' @usage NULL
