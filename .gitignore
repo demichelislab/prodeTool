@@ -1,5 +1,5 @@
-.Rmd
-.Rproj
+origin/main/*.Rmd
+origin/main/*.Rproj
 .Rproj.user
 .Rhistory
 .Rdata
