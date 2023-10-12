@@ -1,5 +1,5 @@
-origin/main/*.Rmd
-origin/main/*.Rproj
+README.Rmd
+prodeTool.Rproj
 .Rproj.user
 .Rhistory
 .Rdata
