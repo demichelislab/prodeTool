@@ -1,14 +1,12 @@
 # This is a quick example of a possible run when performing essentiality or
 # context-essentiality analysis
 
-library(devtools)
-install()
 library(prodeTool)
 
 # TOY EXAMPLE ==================================================================
 
-N_GENES = 10000
-N_SAMPLES = 100
+N_GENES = 100
+N_SAMPLES = 10
 
 ## This is an example of an edge table
 gr <- data.frame(

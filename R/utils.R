@@ -55,7 +55,6 @@
     apply(x, 2, sort, method="quick")
 }
 
-
 .inputCheck <- function(
     score_matrix, col_data, design, edge_table
 ){
