@@ -12,11 +12,11 @@ RoxygenNote: 7.2.1
 Depends: 
     R (>= 3.6)
 Imports: 
+    SummarizedExperiment, 
+    S4Vectors,
     stats,
     methods,
-    Matrix, 
-    S4Vectors,
-    SummarizedExperiment
+    Matrix
 Suggests: 
     devtools,
     testthat (>= 3.0.0)

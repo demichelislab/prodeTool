@@ -1,6 +1,7 @@
 # Class prode Input ============================================================
 
 #' @import methods
+#' @import SummarizedExperiment
 #' @export
 .prodeInput <- setClass(
     Class = "prodeInput",
@@ -83,6 +84,7 @@ getProdeInput <- function(score_matrix, col_data, edge_table, design=NULL){
 # Class prode results ==========================================================
 
 #' @import methods
+#' @import SummarizedExperiment
 #' @export
 prodeResults <- setClass(
     Class = "prodeResults",

@@ -7,10 +7,11 @@
 runProde(
   prodeInput,
   cores = 1,
-  filterCtrl = T,
+  filterCtrl = F,
   n_iter = 10000,
-  extendedStats = F,
-  computeBack = F
+  extendedNICEStats = F,
+  computeBack = F,
+  scaledEst = T
 )
 }
 \arguments{

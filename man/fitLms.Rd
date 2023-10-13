@@ -2,9 +2,18 @@
 % Please edit documentation in R/linear_models_fit_functions.R
 \name{fitLms}
 \alias{fitLms}
-\title{Fit linear models on input data}
+\title{#' Compute covariate corrected signal for 'single' analysis
+#'
+#' @param x a model.matrix object containing variables included in the linear model.
+#'     This object is expected to have rows corresponding to the score-matrix columns.
+#' @param y a score-matrix with a number of columns equal to x.
+#' @param extendedNICEStats a logical being TRUE if extended stats for NICE score are neeeded.
+#'
+#' @return a matrix object with results of linear model fitting procedure.
+#' @export
+fitLmsEss <- function(y){}
 \usage{
-fitLms(x, y, extendedStats = F)
+fitLms(x, y, extendedNICEStats = F)
 }
 \arguments{
 \item{x}{a model.matrix object containing variables included in the linear model.
@@ -18,5 +27,23 @@ This object is expected to have rows corresponding to the score-matrix columns.}
 a matrix object with results of linear model fitting procedure.
 }
 \description{
-Fit linear models on input data
+#' Compute covariate corrected signal for 'single' analysis
+#'
+#' @param x a model.matrix object containing variables included in the linear model.
+#'     This object is expected to have rows corresponding to the score-matrix columns.
+#' @param y a score-matrix with a number of columns equal to x.
+#' @param extendedNICEStats a logical being TRUE if extended stats for NICE score are neeeded.
+#'
+#' @return a matrix object with results of linear model fitting procedure.
+#' @export
+fitLmsEss <- function(y){
 }
+\details{
+
+}
+\section{Fit all models}{
+yy      <- t(y)
+fits    <- .fitModels(yy,rep(1,nrow(yy)))
+coefs   <- .extractCoefsEss(fits) # exclude p-value : does not make sense
+}
+
