@@ -15,4 +15,4 @@ devtools::install_github('cantorethomas/prodeTool')
 ```
 
 ## Quick example 
-For a quick run, NIE and NICE scores can be computed as reported in the `example/run_tests.R` 
+For a quick run and example, NIE and NICE scores can be computed as reported in the `example/run_tests.R` 

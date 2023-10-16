@@ -87,7 +87,6 @@ getRealRhos <- function(bet_tab, adj_m, back_dis, scaledEst){
     colnames(back_dis) <- sort(unique(degs))
     pbs <- apply(adj_m, 1, function(x){
         score <- .runRhoReal(x, rr_v)
-       # frac  <- .runFracReal(x, rr_v)
         p.val <- .runRhoPval(x, score, back_dis)
         c(score, p.val)
     })
@@ -105,17 +104,20 @@ getRealRhos <- function(bet_tab, adj_m, back_dis, scaledEst){
     )
 }
 
-#' For each gene's neighborhood, this function computes the rho value
+#' Computes \eqn{\rho} p-values according to RRA.
+#'
+#' @details For each gene's neighborhood, this function computes the rho value
 #' as described by the RRA algorithm (Kolde et al., 2012) and a p-value
 #' leveraging an input list of fitted background rhos distributions on randomly
 #' shuffled ranks, depending on neighborhood size. The lower the p-value,
 #' the more genes in neighborhood are distributed towards low ranks.
 #'
-#' @param beta_tab a table of linear models fit statistics as computed by `fitLms()`.
-#' @param adj_m an adjacency matrix with rows and columns corresponding to rows of `beta_tab`.
+#' @param bet_tab a table of linear models fit statistics as computed by \code{fitLms()}.
+#' @param adj_m an adjacency matrix with rows and columns corresponding to rows of \code{beta_tab}.
 #' @param back_par a table of parameters of background fitted distributions.
+#' @param scaledEst logical, whether to used scaled coefficients or not to computee gene-level signal.
 #' @returns matrix object with statistics of RRA for each gen in beta_tab.
-getRealRhosFitDistr <- function(bet_tab, adj_m, back_par, runEss, scaledEst){
+getRealRhosFitDistr <- function(bet_tab, adj_m, back_par, scaledEst){
 
     if (scaledEst){
       rr_v <- rank(bet_tab[,"t value"], na.last = 'keep')/sum(!is.na(bet_tab[,"t value"]))
@@ -126,7 +128,6 @@ getRealRhosFitDistr <- function(bet_tab, adj_m, back_par, runEss, scaledEst){
     pbs <- apply(adj_m, 1, function(x){
 
         score <- .runRhoReal(x, rr_v)
-        #frac  <- .runFracReal(x, rr_v)
         p.val <- .runRhoPvalFitDistr(x, score, back_par)
 
         c(score, p.val)
@@ -149,23 +150,3 @@ getRealRhosFitDistr <- function(bet_tab, adj_m, back_par, runEss, scaledEst){
         'score'         = .computeFinalScore(rr_v, u_n)
     )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

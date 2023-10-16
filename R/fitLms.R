@@ -24,6 +24,7 @@
 
 }
 
+# Computes extended statistics for each group in NICE scores computation.
 .computeStats <- function(y, x, extendedNICEStats){
 
     ctrl_mean <- rowMeans(y[,which(x[,ncol(x)] == 0)], na.rm=T)
@@ -46,40 +47,20 @@
 
 # Main function ----------------------------------------------------------------
 
-#'
-#' #' Compute covariate corrected signal for 'single' analysis
-#' #'
-#' #' @param x a model.matrix object containing variables included in the linear model.
-#' #'     This object is expected to have rows corresponding to the score-matrix columns.
-#' #' @param y a score-matrix with a number of columns equal to x.
-#' #' @param extendedNICEStats a logical being TRUE if extended stats for NICE score are neeeded.
-#' #'
-#' #' @return a matrix object with results of linear model fitting procedure.
-#' #' @export
-#' fitLmsEss <- function(y){
-#'
-#'   # Fit all models
-#'   yy      <- t(y)
-#'   fits    <- .fitModels(yy,rep(1,nrow(yy)))
-#'   coefs   <- .extractCoefsEss(fits) # exclude p-value : does not make sense
-#'
-#'   mm <- do.call(rbind, coefs)[,-4]
-#'
-#'   colnames(mm) <- gsub(' ', '_', paste(colnames(mm), 'ess'))
-#'
-#'   return(mm)
-#'
-#' }
-
-#' Fit linear models on input data
+#' Fit linear models on each row of score-matrix
 #'
 #' @param x a model.matrix object containing variables included in the linear model.
 #'     This object is expected to have rows corresponding to the score-matrix columns.
-#' @param y a score-matrix with a number of columns equal to x.
-#' @param extendedStats a logical if extended stats need to be computed.
+#' @param y a score-matrix with a number of columns equal to x, no NA values are allowed.
+#' @param extendedNICEStats a logical if extended stats need to be computed.
+#' @returns matrix object with statistics of linear model fits.
+#' @examples
+#' \dontrun{
+#'     y <- rnorm(100, 10, 10)
+#'     x <- sample(c(1,0), 10, replace=T)
+#'     fitLms(x, y)
+#' }
 #'
-#' @return a matrix object with results of linear model fitting procedure.
-#' @export
 fitLms <- function(x, y, extendedNICEStats=F){
 
     # Fit all models

@@ -1,4 +1,4 @@
-# ------------------------------------------------------------------------------
+# Utils for adjacency matrix ---------------------------------------------------
 
 .checkAdjMatr <- function(all_gns_adj, all_gns_sco){
 
@@ -10,23 +10,28 @@
 
 .getAdjMatr <- function(etab, gns){
 
-    gns2n <- 1:length(gns)
-    names(gns2n) <- gns
+    # gns2n <- setNames(1:length(gns), gns)
+    #
+    # idxm <- cbind(
+    #     c(as.numeric(gns2n[etab[,1]]), as.numeric(gns2n[etab[,2]]),1:length(gns)),
+    #     c(as.numeric(gns2n[etab[,2]]), as.numeric(gns2n[etab[,1]]),1:length(gns))
+    # )
 
     idxm <- cbind(
-        c(as.numeric(gns2n[etab[,1]]), as.numeric(gns2n[etab[,2]]),1:length(gns)),
-        c(as.numeric(gns2n[etab[,2]]), as.numeric(gns2n[etab[,1]]),1:length(gns))
+        c(    match(etab[,1], gns),     match(etab[,2], gns), 1:length(gns)),
+        c(    match(etab[,2], gns),     match(etab[,1], gns), 1:length(gns))
     )
 
-    idxm <- idxm[stats::complete.cases(idxm), ]
+    idxm <- idxm[stats::complete.cases(idxm), ] # removes those score matrix genes not present  in edge list
 
     mm <- Matrix::Matrix(0, length(gns), length(gns))
     colnames(mm) <- rownames(mm) <- gns
     mm[idxm] <- 1
     return(mm)
+
 }
 
-.filter0DegAdj <- function(adj_mat, deg){ # this will be a method of object
+.filter0DegAdj <- function(adj_mat, deg){
     adj_mat[-which(deg == 1), -which(deg == 1)]
 }
 
@@ -34,8 +39,37 @@
     beta_tab[-which(deg == 1),]
 }
 
-.filterDeg <- function(deg){
-    deg[-which(deg == 0)]
+.filterAdjMatrix <- function(filterCtrl, prodeInput, fit_tab){
+
+    # 1. Filtering based on mean of wild-type models ...........................
+    filtered <-S4Vectors::DataFrame()
+
+    if (filterCtrl){
+        keep     <- which(
+            .getCtrlMean(
+                SummarizedExperiment::assay(prodeInput),
+                designMatrix(prodeInput)
+            ) < 0
+        )
+        filtered <- fit_tab[-keep,]
+        fit_tab  <- fit_tab[ keep,]
+    }
+
+    adj_m    <- subsetAdjMatrix(prodeInput, rownames(fit_tab)) # update adj matrix
+
+    # 2. Filtering based on degree == 1 (meaning no connections) ...............
+    dds      <- Matrix::rowSums(adj_m)
+    if (any(dds == 1)){
+        adj_m    <- .filter0DegAdj(adj_m, dds)
+        fit_tab  <- .filter0DegBet(fit_tab, dds)
+    }
+
+    list(
+        filtered  = filtered,
+        fit_tab   = fit_tab,
+        adjMatrix = adj_m
+    )
+
 }
 
 .checkBetAdj <- function(beta_tab, adj_mat, deg){
@@ -43,17 +77,7 @@
     all(rownames(beta_tab) == colnames(adj_mat))
 }
 
-.vRunif <- Vectorize(function(n){
-    runif(n)
-}, "n")
-
-.vSample <- Vectorize(function(n, s){
-    sample(n, s)
-}, "s")
-
-.colSort <- function(x){
-    apply(x, 2, sort, method="quick")
-}
+# Checks for input data --------------------------------------------------------
 
 .inputCheck <- function(
     score_matrix, col_data, design, edge_table
@@ -93,43 +117,38 @@
     if (!is.null(design)){
 
         if (!inherits(design,"formula")){
-            stop("Input design should be a formula, please pass it to formula()")
+            stop("Input design should be a formula, please pass it to as.formula()")
         }
 
-        if (diff(dim(attr(terms(design), "factors"))) != 0){
+        if (diff(dim(attr(stats::terms(design), "factors"))) != 0){
             stop(
             paste0("Please check your formula, no left-side term is needed.\n",
                  "Formula should be of the form: '~covariates'."))
         }
 
-        if (!all(colnames(attr(terms(design), "factors")) %in% colnames(col_data))){
+        if (!all(colnames(attr(stats::terms(design), "factors")) %in% colnames(col_data))){
             stop("Some variables in design formula are not in column data")
+        }
+
+        if (!all(colnames(attr(stats::terms(design), "factors")) %in% colnames(col_data))){
+            stop("Some variables in design formula are not in column data")
+        }
+
+        ff <- colnames(attr(stats::terms(design), "factors"))[ncol(attr(stats::terms(design), "factors"))]
+        if (!length(unique(col_data[,ff])) == 2){
+            stop("Grouping variable does not have two groups")
+        }
+
+        if (any(is.na(unique(col_data[,ff])))){
+            stop("Some of the values in grouping variable are NAs")
+        }
+
+        if (! all(col_data[,ff] %in% c(1,0))){
+            stop("Grouping variable is not 0,1 encoded, please modify it")
         }
 
     }
 
-    # # Input condition ----------------------------------------------------------
-    #
-    # if (!condition%in%colnames(samples_info)){
-    #     stop("Condition must be a column name of column_data.")
-    # }
-    # if (any(is.na(samples_info[[condition]]))){
-    #     stop("Condition has NA values.")
-    # }
-    # if (!length(unique(samples_info[[condition]]))==2){
-    #     stop("Inspected condition has more than 2 levels.")
-    # }
-    #
-    # # Input covariates ---------------------------------------------------------
-    #
-    # if (!all(covariates%in%colnames(samples_info))){
-    #     stop("Some covariates are not present in samples_info.")
-    # }
-    #
-    # if (any(vapply(covariates, function(cc) length(unique(samples_info[[cc]]))<2, T))){
-    #     stop("Some covariates have less than two levels.")
-    # }
-    #
     # Input edge table ---------------------------------------------------------
 
     if (dim(edge_table)[2] != 2){

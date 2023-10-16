@@ -1,7 +1,14 @@
-# Class prode Input ============================================================
-
+# Class prodeInput =============================================================
+#' \code{prodeInput} class
+#'
+#' @description prodeInput class extends \linkS4class{SummarizedExperiment} class
+#' including adjacency matrix computed by \code{getProdeInput} function from
+#' input \code{edge_list} and \code{modality}, a character string reporting
+#' the type of score that needs to be computed by PRODE (\code{NIE_score} or
+#' \code{NICE_score}).
 #' @import methods
 #' @import SummarizedExperiment
+#' @import S4Vectors
 #' @export
 .prodeInput <- setClass(
     Class = "prodeInput",
@@ -13,59 +20,9 @@
     contains="SummarizedExperiment"
 )
 
-# Object Constructor -----------------------------------------------------------
+# prodeInput Class Constructor.................................................
 
-#' @import methods
-#' @export
-getProdeInput <- function(score_matrix, col_data, edge_table, design=NULL){
-
-    ## Input check .............................................................
-
-    .inputCheck(
-        score_matrix = score_matrix,
-        col_data     = col_data,
-        edge_table   = edge_table,
-        design       = design
-    )
-
-    if (is.null(design)){
-
-        message(paste0('NOTE: No formula has been given - ',
-                       'Preparing Input for NIE scores computation',
-                       ' (essentiality analysis)'))
-
-        mod <- 'NIE_score'
-
-        design <- stats::model.matrix.default(
-            as.formula("~1"),
-            as.data.frame(col_data)
-        )
-
-    } else {
-
-        message(paste0('NOTE: Formula has been given - ',
-                'Preparing Input for NICE scores computation',
-                ' (context-essentiality analysis)'))
-
-        mod <- 'NICE_score'
-
-        design <- stats::model.matrix.default(
-            design,
-            as.data.frame(col_data)
-        )
-
-    }
-
-    ## Get adjMatr .............................................................
-
-    adj_m <- .getAdjMatr(
-        etab = edge_table,
-        gns  = rownames(score_matrix)
-    )
-
-    stopifnot(.checkBetAdj(score_matrix, adj_m))
-
-    ## Class Construction ......................................................
+newProdeInput <- function(score_matrix, col_data, design, adjMatrix, modality){
 
     se <- SummarizedExperiment::SummarizedExperiment(
         assays     = list(score_matrix = score_matrix),
@@ -75,18 +32,25 @@ getProdeInput <- function(score_matrix, col_data, edge_table, design=NULL){
     .prodeInput(
         se,
         design     = design,
-        adjMatrix  = adj_m,
-        modality   = mod
+        adjMatrix  = adjMatrix,
+        modality   = modality
     )
 
 }
 
-# Class prode results ==========================================================
 
+# Class prodeResults ===========================================================
+
+#' \code{prodeResults} class
+#'
+#' @description \code{prodeResults} class is an object which extends DataFrame
+#' object (reporting results of PRODE run), by including \code{adjMatrix} as the
+#' adjacency matrix resulting after PRODE run (in case some genes have been filtered out) and
+#' filterdData, a DFrame object containing scores and statistics of genes that have been filtered
+#' out during the analyisis (depending on the analyses settings).
 #' @import methods
-#' @import SummarizedExperiment
 #' @export
-prodeResults <- setClass(
+.prodeResults <- setClass(
     Class = "prodeResults",
     slots = representation(
         adjMatrix     = "Matrix",
@@ -95,17 +59,25 @@ prodeResults <- setClass(
     contains = "DFrame"
 )
 
-# Object Constructor -----------------------------------------------------------
+# prodeResults Class Constructor................................................
 
-#' @import methods
-#' @export
-prodeResults <- function(output_df, adj_m, filteredData){
+newProdeResults <- function(fit_tab, rra_tab, adjMatrix, modality, filtered){
 
-    new("prodeResults", output_df, adjMatrix=adj_m, filteredData=filteredData)
+    df <- S4Vectors::DataFrame(
+        "gene" = rownames(fit_tab),
+        fit_tab,
+        rra_tab
+    )
+
+    colnames(df)[ncol(df)] <- modality
+
+    .prodeResults(
+        df,
+        adjMatrix = adjMatrix,
+        filteredData = S4Vectors::DataFrame(filtered)
+    )
 
 }
-
-
 
 
 

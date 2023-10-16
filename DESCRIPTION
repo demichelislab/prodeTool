@@ -22,9 +22,12 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Collate: 
-    'AllClasses.R'
-    'AccessorsClassProdeInput.R'
-    'linear_models_fit_functions.R'
+    'allClasses.R'
+    'allClassesAccessors.R'
+    'data.R'
+    'fitLms.R'
+    'getProdeInput.R'
+    'getRhos.R'
     'rra_stats_functions.R'
     'runProde.R'
     'utils.R'
