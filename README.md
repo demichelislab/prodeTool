@@ -16,28 +16,19 @@ devtools::install_github('cantorethomas/prodeTool')
 Depending on the user-defined analysis setting, PRODE computes NIE or NICE scores. In both cases, prodeTool runs PRODE in two main steps. First, a `prodeInput` object is computed leveraging the `getProdeInput()` function. Second, PRODE workflow is ran through the `runProde()` function. Here follows a more detailed example when running PRODE to compute NIE or NICE scores. 
 
 ### Input data example 
-Here follows a description of required input information from the `getProdeInput()` function documentation. 
+Here's a description of required input information to run PRODE. For a more detailed description, you can check the `prodeInput()` function description.  
 
-* `design` this is the design formula required for NICE score computation. In the case of
-   NIE score computation, it is ignored (default is set to `NULL`). `design` has to
-   be a `formula` object. Last variable in formula will be considered as the group
-   variable for the linear model fit, being 1 for case group and 0 for control group.
+* `design` is the design formula required for NICE score computation. In the case of
+   NIE score computation, it is ignored (default is set to `NULL`). 
 
-* `score_matrix` matrix of input scores with genes on rows
-   and samples on columns. No `NA` values are allowed. Gene names are required
-   as `rownames`. Sample names are required as `colnames` and need to be
-   identical to `col_data` column names.
+* `score_matrix` matrix of input scores with genes on rows and samples on columns. 
 
-* `col_data` data.frame of column data, as described by `SummarizedExperiment`. Row names
-   need to be identical to score-matrix column names and correspond to samples.
-   Every sample-level included in design formula (if provided) should be included in `col_data`.
-   The group variable, encoding the sample groups that need to be compared for NICE score
-   computation, has to be a binary integer vector, encoding 1 for the case-group and 0 for the
+* `col_data` data.frame of column data, Every sample-level included in design formula (if provided) should be included in `col_data`.
+   The group variable, if present, has to be a binary integer vector, encoding 1 for the case-group and 0 for the
    control-group.
 
 * `edge_table` matrix of interactions between gene pairs. This matrix is composed by interactions on rows
-   and two columns (one for each gene in the pair). Genes not present in `score_matrix` row names
-   will be discarded when constructing `prodeInput` object.
+   and two columns (one for each gene in the pair). 
 
 ```R
 library(prodeTool)
@@ -135,9 +126,9 @@ outputNICE
 #### Output description  
 When running PRODE with `extendedNICEStats=T`, additional columns are computed: 
 
-*`ctrl_mean` is the average value, for each gene, of control samples.
-*`case_mean` is the average value, for each gene, of case samples.
-*`ctrl_sd` is the standard deviation of each gene values in control samples.
-*`case_sd` is the standard deviation of each gene values in case samples.
-*`ctrl_n` is the number of samples in the control group.
-*`case_n` is the number of samples in the case group.
+* `ctrl_mean` is the average value, for each gene, of control samples.
+* `case_mean` is the average value, for each gene, of case samples.
+* `ctrl_sd` is the standard deviation of each gene values in control samples.
+* `case_sd` is the standard deviation of each gene values in case samples.
+* `ctrl_n` is the number of samples in the control group.
+* `case_n` is the number of samples in the case group.
