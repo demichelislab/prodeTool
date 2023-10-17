@@ -27,7 +27,7 @@
 
 .runRhoReal <- function(x, rr_v){
     re <- sort(rr_v[which(x!=0)], method="quick")
-    ps <- stats::pbeta(re, 1:length(re), length(re) - 1:length(re) + 1)
+    ps <- stats::pbeta(re, seq_along(re), length(re) - seq_along(re) + 1)
     min(ps, na.rm=T)
 }
 
@@ -54,9 +54,12 @@ getRandomRhos <- function(adj_m, n_iter){
 
     degs <- Matrix::rowSums(adj_m)
 
-    sapply(sort(unique(degs)), function(ll){
+    back_dis <- vapply(sort(unique(degs)), function(ll){
         .runRhoRan(ll, n_iter)
-    }, simplify=T)
+    }, rep(0.1, n_iter))
+
+    colnames(back_dis) <- sort(unique(degs))
+    return(back_dis)
 }
 
 # Same function as getRandomRhos() but with chance to run in parallel
@@ -64,11 +67,14 @@ getRandomRhosPar <- function(adj_m, n_iter, cores=1){
 
     degs <- Matrix::rowSums(adj_m)
 
-    do.call(cbind,
+    back_dis <- do.call(cbind,
       parallel::mclapply(sort(unique(degs)), function(ll){
         .runRhoRan(ll, n_iter)
       }, mc.cores=cores)
     )
+
+    colnames(back_dis) <- sort(unique(degs))
+    return(back_dis)
 
 }
 
@@ -83,8 +89,6 @@ getRealRhos <- function(bet_tab, adj_m, back_dis, scaledEst){
       rr_v <- rank(bet_tab[,"Estimate"])/nrow(bet_tab)
     }
 
-    degs <- Matrix::rowSums(adj_m)
-    colnames(back_dis) <- sort(unique(degs))
     pbs <- apply(adj_m, 1, function(x){
         score <- .runRhoReal(x, rr_v)
         p.val <- .runRhoPval(x, score, back_dis)

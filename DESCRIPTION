@@ -28,7 +28,6 @@ Collate:
     'fitLms.R'
     'getProdeInput.R'
     'getRhos.R'
-    'rra_stats_functions.R'
     'runProde.R'
     'utils.R'
 LazyData: true

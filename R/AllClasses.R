@@ -46,13 +46,17 @@ newProdeInput <- function(score_matrix, col_data, design, adjMatrix, modality){
 #' @description \code{prodeResults} class is an object which extends DataFrame
 #' object (reporting results of PRODE run), by including \code{adjMatrix} as the
 #' adjacency matrix resulting after PRODE run (in case some genes have been filtered out) and
-#' filterdData, a DFrame object containing scores and statistics of genes that have been filtered
+#' \code{filterdData}, a DataFrame object containing scores and statistics of genes that have been filtered
 #' out during the analyisis (depending on the analyses settings).
+#' @slot results = DataFrame object, reporting the results of PRODE run.
+#' @slot adjMatrix = Matrix object, an adjacency matrix as computed by \code{\link{getProdeInput}}.
+#' @slot filteredData = a \code{\link[S4Vectors]{DataFrame}} object collecting genes that have been filtered out during the analysis.
 #' @import methods
 #' @export
 .prodeResults <- setClass(
     Class = "prodeResults",
     slots = representation(
+        results       = "DFrame",
         adjMatrix     = "Matrix",
         filteredData  = "DFrame"
     ),
@@ -72,7 +76,7 @@ newProdeResults <- function(fit_tab, rra_tab, adjMatrix, modality, filtered){
     colnames(df)[ncol(df)] <- modality
 
     .prodeResults(
-        df,
+        results = df,
         adjMatrix = adjMatrix,
         filteredData = S4Vectors::DataFrame(filtered)
     )

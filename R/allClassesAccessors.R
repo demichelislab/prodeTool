@@ -78,7 +78,7 @@ setGeneric("results", function(object) standardGeneric("results"))
 #' @aliases results
 #' @usage NULL
 setMethod("results", signature = "prodeResults",
-          definition = function(object) as.data.frame(object))
+          definition = function(object) object@results)
 
 #' adjMatrixResults
 #'
@@ -111,3 +111,26 @@ setGeneric("filteredGenes", function(object) standardGeneric("filteredGenes"))
 #' @usage NULL
 setMethod("filteredGenes", signature = "prodeResults",
           definition = function(object) object@filteredData)
+
+#' @rdname show
+#' @aliases show
+#' @usage NULL
+setMethod("show", signature = "prodeResults",
+          definition = function(object){
+              cat('\n')
+              cat('Result table, access with `results()`\n')
+              cat('Total number of genes: ', nrow(object@results), '\n\n')
+              show(as.data.frame(head(object@results)))
+              cat('\n\n')
+              cat('Adjacency Matrix, access with `adjMatrixResults()`\n')
+              cat('Average rounded Degree: ', round(mean(Matrix::colSums(object@adjMatrix))))
+        })
+
+
+
+
+
+
+
+
+

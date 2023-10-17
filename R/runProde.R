@@ -119,7 +119,7 @@ runProde <- function(
 
     if (computeBack){
 
-        message("* Compute background distribution for RRA statistics (this may take a while).")
+        message("* Computing background distribution for RRA statistics (this may take a while).")
         if (cores > 1){
 
             back_dis <- getRandomRhosPar(
@@ -137,7 +137,7 @@ runProde <- function(
 
         }
 
-        message("* Compute ", unlist(strsplit(modality(prodeInput), '_')), '.')
+        message("* Computing ", unlist(strsplit(modality(prodeInput), '_')), '.')
 
         rra_tab <- getRealRhos(
             bet_tab  = fit_tab,

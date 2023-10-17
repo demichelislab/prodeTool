@@ -18,8 +18,8 @@
     # )
 
     idxm <- cbind(
-        c(    match(etab[,1], gns),     match(etab[,2], gns), 1:length(gns)),
-        c(    match(etab[,2], gns),     match(etab[,1], gns), 1:length(gns))
+        c(    match(etab[,1], gns),     match(etab[,2], gns), seq_along(gns)),
+        c(    match(etab[,2], gns),     match(etab[,1], gns), seq_along(gns))
     )
 
     idxm <- idxm[stats::complete.cases(idxm), ] # removes those score matrix genes not present  in edge list
@@ -112,7 +112,6 @@
     }
 
     # Input design -------------------------------------------------------------
-    #TODO: check input for design formula
 
     if (!is.null(design)){
 

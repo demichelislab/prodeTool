@@ -1,5 +1,6 @@
 # This is a quick example of a possible run when performing essentiality or
 # context-essentiality analysis
+set.seed(100)
 
 library(prodeTool)
 
@@ -44,6 +45,8 @@ outputNIE <- runProde(
     scaledEst         = F # When computing NIE scores, scaling is suggested to be set as F
 )
 
+outputNIE
+
 # FOR NICE SCORES (CONTEXT ESSENTIALITY ANALYSIS) ..............................
 # with pre-computed back-ground distribution (suggested option)
 
@@ -61,14 +64,18 @@ outputNICE <- runProde(
     scaledEst         = T
 )
 
+outputNICE
+
 # # FOR NICE SCORES (CONTEXT ESSENTIALITY ANALYSIS)
 # # computing back-ground distribution (takes more time)
 #
 # outputNICE.v2 <- runProde(
 #     prodeInput        = prodeInputNICE,
-#     filterCtrl        = F,
+#     filterCtrl        = T,
 #     computeBack       = T,
 #     extendedNICEStats = T,
 #     n_iter            = 10^5,
 #     cores             = 2
 # )
+#
+# cor(outputNICE@results$NICE_score, outputNICE.v2@results$NICE_score)

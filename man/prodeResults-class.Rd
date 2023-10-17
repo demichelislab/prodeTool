@@ -9,6 +9,16 @@
 \code{prodeResults} class is an object which extends DataFrame
 object (reporting results of PRODE run), by including \code{adjMatrix} as the
 adjacency matrix resulting after PRODE run (in case some genes have been filtered out) and
-filterdData, a DFrame object containing scores and statistics of genes that have been filtered
+\code{filterdData}, a DataFrame object containing scores and statistics of genes that have been filtered
 out during the analyisis (depending on the analyses settings).
 }
+\section{Slots}{
+
+\describe{
+\item{\code{results}}{= DataFrame object, reporting the results of PRODE run.}
+
+\item{\code{adjMatrix}}{= Matrix object, an adjacency matrix as computed by \code{\link{getProdeInput}}.}
+
+\item{\code{filteredData}}{= a \code{\link[S4Vectors]{DataFrame}} object collecting genes that have been filtered out during the analysis.}
+}}
+
