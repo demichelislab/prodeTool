@@ -8,7 +8,7 @@ compute, for each gene, Neighborhood-Informed Essential (NIE) or Neighborhood-In
 PRODE is currently available as the R package prodeTool. 
 It can be installed from github with: 
 
-```
+```R
 devtools::install_github('cantorethomas/prodeTool')
 ```
 
@@ -39,7 +39,7 @@ Here follows a description of required input information from the `getProdeInput
    and two columns (one for each gene in the pair). Genes not present in `score_matrix` row names
    will be discarded when constructing `prodeInput` object.
 
-```
+```R
 library(prodeTool)
 
 set.seed(100)
@@ -78,7 +78,7 @@ gr <- data.frame(
 runs PRODE workflow. During NIE scores computation, no groups are compared, hence, design formula is not necessary. 
 
 #### Minimal run 
-```
+```R
 prodeInputNIE <- getProdeInput(
     score_matrix   = ds,
     col_data       = dm,
@@ -90,9 +90,10 @@ outputNIE <- runProde(
     scaledEst         = F # When computing NIE scores, scaling is suggested to be set as F
 )
 
-outputNIE
 ```
-#### Output description  
+#### Output description 
+Here follows a description of major output columns. Missing ones are better descibed in `runProde()` documentation. 
+
 ##### Gene-level results
 * `Estimate` in case of NIE scores, it corresponds to the intercept of model fit,
         i.e., for each gene, the average values across samples. In case of NICE scores, it's
@@ -104,7 +105,6 @@ outputNIE
 
 * `rra_score` is the $\rho$ value computed by RRA algorithm for each gene.
 * `rra_p` is the p-value corresponding to each $\rho$ value (computed according to neighborhood size).
-* `rra_fdr` is the FDR computed from `rra_p`.
 
 ##### Final Score results
 
@@ -115,7 +115,7 @@ outputNIE
 ### NICE scores  
 NICE scores are obtained from the comparison of two sample groups, hence, `design` formula, need to include the grouping variable present in `col_data` object, on the left side as the last variable. In the design, other variables can be added, as confounding factors in the analysis. In the following example, in the $~b+a$, $a$ is a binary vector encoding the group variable, while $b$ is a covariate. lower NICE scores correspond to genes which display neighborhood-informed context essential  signal in samples part of the case group, compared to the control group. 
 
-```
+```R
 prodeInputNICE <- getProdeInput(
     score_matrix   = ds,
     col_data       = dm,
