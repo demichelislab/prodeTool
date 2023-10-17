@@ -1,4 +1,5 @@
 # PRODE: Neighborhood Informed Essential and Context Essential scores
+[![CodeFactor](https://www.codefactor.io/repository/github/cantorethomas/prodetool/badge)](https://www.codefactor.io/repository/github/cantorethomas/prodetool)
 
 PRODE is a tool that integrates Gene Effects data and Protein-Protein Interactions to
 compute, for each gene, Neighborhood-Informed Essential (NIE) or Neighborhood-Informd Context Essential (NICE) scores. 
