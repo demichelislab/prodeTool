@@ -1,7 +1,11 @@
 # PRODE: Neighborhood Informed Essential and Context Essential scores
-[![CodeFactor](https://www.codefactor.io/repository/github/cantorethomas/prodetool/badge)](https://www.codefactor.io/repository/github/cantorethomas/prodetool)
 
+<!-- badges: start -->
+
+[![CodeFactor](https://www.codefactor.io/repository/github/cantorethomas/prodetool/badge)](https://www.codefactor.io/repository/github/cantorethomas/prodetool)
 [![Codecov test coverage](https://codecov.io/gh/cantorethomas/prodeTool/branch/main/graph/badge.svg)](https://app.codecov.io/gh/cantorethomas/prodeTool?branch=main)
+
+<!-- badges: end -->
 
 N.B.: this repository is still a work in progress. 
 
