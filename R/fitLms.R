@@ -31,8 +31,8 @@
     case_mean <- rowMeans(y[,which(x[,ncol(x)] == 1)], na.rm=T)
     ctrl_sd   <- apply(y[,which(x[,ncol(x)] == 0)], 1,  function(x) sd(x, na.rm=T))
     case_sd   <- apply(y[,which(x[,ncol(x)] == 1)], 1, function(x) sd(x, na.rm=T))
-    ctrl_n    <- sum(x[,ncol(x)] == 0)
-    case_n    <- sum(x[,ncol(x)] == 1)
+    ctrl_n    <- sum(x[,ncol(x)] == 0, na.rm=T)
+    case_n    <- sum(x[,ncol(x)] == 1, na.rm=T)
 
     cbind(
         "ctrl_mean" = ctrl_mean,
@@ -56,12 +56,30 @@
 #' @returns matrix object with statistics of linear model fits.
 #' @examples
 #' \dontrun{
-#'     y <- rnorm(100, 10, 10)
-#'     x <- sample(c(1,0), 10, replace=T)
+#'
+#'     y <- matrix(rnorm(100), 10, 10)
+#'
+#'     col_data <- data.frame('gr' = rep.int(c(1,0), c(5,5)))
+#'
+#'     x <- stats::model.matrix.default(
+#'           stats::as.formula("~gr"),
+#'           col_data
+#'     )
+#'
 #'     fitLms(x, y)
 #' }
 #'
 fitLms <- function(x, y, extendedNICEStats=F){
+
+    if (any(is.na(y))){
+        stop('Matrix contains NAs, this would cause',
+             ' altered linear model estimates.')
+    }
+
+    if (any(is.na(x))){
+        warning('There are some NAs in the design matrix: ',
+                'rows will be excluded from model fit.')
+    }
 
     # Fit all models
     yy      <- t(y)
@@ -72,6 +90,14 @@ fitLms <- function(x, y, extendedNICEStats=F){
     mm <- do.call(rbind, coefs)
 
     if (extendedNICEStats){ # If NICE score is computed
+
+      if (all(x[,ncol(x)] != 0)){
+
+          warning('Computing extended stats for NIE scores will ',
+                  'not produce any estimate for control group.')
+
+      }
+
       info    <- .computeStats(y,x)
       mm <- cbind(
         mm,

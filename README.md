@@ -1,6 +1,8 @@
 # PRODE: Neighborhood Informed Essential and Context Essential scores
 [![CodeFactor](https://www.codefactor.io/repository/github/cantorethomas/prodetool/badge)](https://www.codefactor.io/repository/github/cantorethomas/prodetool)
 
+N.B.: this repository is still a work in progress. 
+
 PRODE is a tool that integrates Gene Effects data and Protein-Protein Interactions to
 compute, for each gene, Neighborhood-Informed Essential (NIE) or Neighborhood-Informd Context Essential (NICE) scores. 
 
@@ -105,7 +107,7 @@ Here follows a description of major output columns. Missing ones are better desc
 * `NIE_score`computed as $log(u_{gene} \times u_{neigh})$
 
 ### NICE scores  
-NICE scores are obtained from the comparison of two sample groups, hence, `design` formula, need to include the grouping variable present in `col_data` object, on the left side as the last variable. In the design, other variables can be added, as confounding factors in the analysis. In the following example, in the $~b+a$, $a$ is a binary vector encoding the group variable, while $b$ is a covariate. lower NICE scores correspond to genes which display neighborhood-informed context essential  signal in samples part of the case group, compared to the control group. 
+NICE scores are obtained from the comparison of two groups of samples. To compute them, the `design` formula needs to include the grouping variable present in the `col_data` object as the on the left-most covariates within the design formula. If needed, other variables can be added as confounding factors in the analysis. In the following example, in the $~b+a$, $a$ is a binary vector encoding the group variable, while $b$ is a covariate. Lower NICE scores correspond to genes which display neighborhood-informed context essential signal in the samples that are part of the case group, compared to the control group. 
 
 ```R
 prodeInputNICE <- getProdeInput(

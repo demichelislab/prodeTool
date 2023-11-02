@@ -22,8 +22,16 @@ Fit linear models on each row of score-matrix
 }
 \examples{
 \dontrun{
-    y <- rnorm(100, 10, 10)
-    x <- sample(c(1,0), 10, replace=T)
+
+    y <- matrix(rnorm(100), 10, 10)
+
+    col_data <- data.frame('gr' = rep.int(c(1,0), c(5,5)))
+
+    x <- stats::model.matrix.default(
+          stats::as.formula("~gr"),
+          col_data
+    )
+
     fitLms(x, y)
 }
 
