@@ -123,6 +123,10 @@ getRealRhos <- function(bet_tab, adj_m, back_dis, scaledEst){
 #' @returns matrix object with statistics of RRA for each gen in beta_tab.
 getRealRhosFitDistr <- function(bet_tab, adj_m, back_par, scaledEst){
 
+    if ((nrow(adj_m) != ncol(adj_m)) | (nrow(adj_m) != nrow(bet_tab))){
+        stop('Adj matrix and fit table do not have consistent dimension.')
+    }
+
     if (scaledEst){
       rr_v <- rank(bet_tab[,"t value"], na.last = 'keep')/sum(!is.na(bet_tab[,"t value"]))
     } else {
@@ -138,14 +142,10 @@ getRealRhosFitDistr <- function(bet_tab, adj_m, back_par, scaledEst){
 
     })
 
-    #degs <- Matrix::rowSums(adj_m)
-    #mr <- (adj_m %*% rr_v)[,1]/degs
-
     u_n <- rank(pbs[2,], na.last = 'keep') /
       sum(!is.na(pbs[2,]))
 
     cbind(
-        #"mean_rank"     = mr,
         "rra_score"     = pbs[1,],
         "rra_p"         = pbs[2,],
         "rra_fdr"       = stats::p.adjust(pbs[2,], "fdr"),

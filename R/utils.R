@@ -42,7 +42,7 @@
 .filterAdjMatrix <- function(filterCtrl, prodeInput, fit_tab){
 
     # 1. Filtering based on mean of wild-type models ...........................
-    filtered <-S4Vectors::DataFrame()
+    filtered <- S4Vectors::DataFrame()
 
     if (filterCtrl){
         keep     <- which(
@@ -60,8 +60,23 @@
     # 2. Filtering based on degree == 1 (meaning no connections) ...............
     dds      <- Matrix::rowSums(adj_m)
     if (any(dds == 1)){
+
+        filtered <- rbind(filtered, fit_tab[which(dds == 1),])
+
         adj_m    <- .filter0DegAdj(adj_m, dds)
         fit_tab  <- .filter0DegBet(fit_tab, dds)
+
+    }
+
+    if (nrow(adj_m) < 1){
+        stop('No genes remained after filtering. ',
+             'Please check if input edge table has ',
+             'same genes as row-names of score matrix')
+    }
+
+    if (nrow(adj_m)/nrow(adjMatrix(prodeInput)) <= 0.5){
+        warning('More than 50% of the genes have ',
+                'been filtered out as not present in edge table!')
     }
 
     list(
