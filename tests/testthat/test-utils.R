@@ -25,7 +25,6 @@
     )
     rownames(dm) <- paste0("S", 1:ncol(ds))
 
-
     ## This is an example of an edge_table
     gr <- data.frame(
         n1 =  sample(paste0("YY", 1:(N_GENES-1)), N_GENES*2, replace=T),
@@ -191,6 +190,43 @@ test_that('.filterAdjMatrix output contains high ctrl mean gns', {
 
 })
 
+
+test_that('.filterAdjMatrix output contains high ctrl mean gns', {
+
+    ds <- rbind(
+        matrix(
+            rnorm((N_GENES*N_SAMPLES)/2, 1, 0.1),
+            nrow=N_GENES/2
+        ),
+        matrix(
+            rnorm((N_GENES*N_SAMPLES)/2, -1, 0.1),
+            nrow=N_GENES/2
+        )
+    )
+
+    rownames(ds) <- paste0("YY", 1:N_GENES)
+    colnames(ds) <- paste0("S", 1:ncol(ds))
+
+    gr <- data.frame(
+        n1 =  c(paste0("YY", seq(1, N_GENES, 2))),
+        n2 =  c(paste0("YY", seq(2, N_GENES, 2)))
+    )
+
+    prInput <- suppressMessages(
+        getProdeInput(score_matrix = ds, col_data = dm, edge_table = gr, as.formula('~a'))
+    )
+
+    fit_tab <- fitLms(designMatrix(prInput), assay(prInput), extendedNICEStats = T)
+
+    filtMat <- suppressWarnings(
+        .filterAdjMatrix(filterCtrl = T, prodeInput = prInput, fit_tab = fit_tab)
+    )
+
+    expect_equal(rownames(filtMat[['adjMatrix']]), rownames(filtMat[['fit_tab']]))
+
+})
+
+
 test_that('.filterAdjMatrix removes 1 degree nodes', {
 
     gr <- data.frame(
@@ -254,7 +290,6 @@ test_that('.filter0DegAdj  removes 0 degrees',{
     expect_equal(nrow(.filter0DegAdj(adj_m, dds)), 0)
 
 })
-
 
 # Tests for .inputCheck ........................................................
 
@@ -327,8 +362,7 @@ test_that('.inputCheck raises error in case of wrong input (5)',{
 
 })
 
-
-test_that('.inputCheck raises error in case of wrong input (5)',{
+test_that('.inputCheck raises error in case of wrong input (6)',{
 
     mode(ds) <- "character"
 
@@ -336,7 +370,65 @@ test_that('.inputCheck raises error in case of wrong input (5)',{
         .inputCheck(
             score_matrix = ds,
             col_data = dm,
-            design = as.formula('~1'),
+            edge_table = gr
+        )
+    )
+
+})
+
+test_that('.inputCheck raises error in case of wrong input (7)',{
+
+    colnames(ds) <- NULL
+
+    expect_error(
+        .inputCheck(
+            score_matrix = ds,
+            col_data = dm,
+            edge_table = gr
+        )
+    )
+
+})
+
+test_that('.inputCheck raises error in case of wrong input (8)',{
+
+    rownames(ds)[1] <- 'xx'
+
+    expect_error(
+        .inputCheck(
+            score_matrix = ds,
+            col_data = dm,
+            edge_table = gr
+        )
+    )
+
+})
+
+
+test_that('.inputCheck raises error in case of wrong input (9)',{
+
+    gr <- gr[,1]
+
+    expect_error(
+        .inputCheck(
+            score_matrix = ds,
+            col_data = dm,
+            edge_table = gr
+        )
+    )
+
+})
+
+
+test_that('.inputCheck raises error in case of wrong input (10)',{
+
+    dm[1,2] <- NA
+
+    expect_error(
+        .inputCheck(
+            score_matrix = ds,
+            col_data = dm,
+            design = '~a',
             edge_table = gr
         )
     )
