@@ -42,7 +42,7 @@
 .filterAdjMatrix <- function(filterCtrl, prodeInput, fit_tab){
 
     # 1. Filtering based on mean of wild-type models ...........................
-    filtered <- S4Vectors::DataFrame()
+    filtered <- data.frame()
 
     if (filterCtrl){
         keep     <- which(
@@ -51,7 +51,7 @@
                 designMatrix(prodeInput)
             ) < 0
         )
-        filtered <- fit_tab[-keep,]
+        filtered <- S4Vectors::bindROWS(filtered, list(fit_tab[-keep,]))
         fit_tab  <- fit_tab[ keep,]
     }
 
@@ -59,9 +59,16 @@
 
     # 2. Filtering based on degree == 1 (meaning no connections) ...............
     dds      <- Matrix::rowSums(adj_m)
+
     if (any(dds == 1)){
 
-        filtered <- rbind(filtered, fit_tab[which(dds == 1),])
+        if (length(which(dds == 1)) == 1){
+            tmp <- t(fit_tab[which(dds == 1),])
+            rownames(tmp) <- rownames(fit_tab)[which(dds == 1)]
+            filtered <- S4Vectors::bindROWS(filtered, list(tmp))
+        } else {
+            filtered <- S4Vectors::bindROWS(filtered, list(fit_tab[which(dds == 1),]))
+        }
 
         adj_m    <- .filter0DegAdj(adj_m, dds)
         fit_tab  <- .filter0DegBet(fit_tab, dds)
@@ -80,7 +87,7 @@
     }
 
     list(
-        filtered  = filtered,
+        filtered  = S4Vectors::DataFrame(filtered),
         fit_tab   = fit_tab,
         adjMatrix = adj_m
     )
