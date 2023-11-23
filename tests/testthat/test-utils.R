@@ -16,14 +16,14 @@
         )
 
     rownames(ds) <- paste0("YY", 1:N_GENES)
-    colnames(ds) <- paste0("S", 1:ncol(ds))
+    colnames(ds) <- paste0("S", seq_len(ncol(ds)))
 
     ## This is an example of a column_data table
     dm <- data.frame(
         a = rep(c(1, 0), each=N_SAMPLES/2),
         b = sample(c("a", "b"), N_SAMPLES, replace=T)
     )
-    rownames(dm) <- paste0("S", 1:ncol(ds))
+    rownames(dm) <- paste0("S", seq_len(ncol(ds)))
 
     ## This is an example of an edge_table
     gr <- data.frame(
@@ -166,7 +166,7 @@ test_that('.filterAdjMatrix output contains high ctrl mean gns', {
     )
 
     rownames(ds) <- paste0("YY", 1:N_GENES)
-    colnames(ds) <- paste0("S", 1:ncol(ds))
+    colnames(ds) <- paste0("S", seq_len(ncol(ds)))
 
     gr <- data.frame(
         n1 =  c(paste0("YY", seq(1, N_GENES, 2))),
@@ -205,7 +205,7 @@ test_that('.filterAdjMatrix output contains high ctrl mean gns', {
     )
 
     rownames(ds) <- paste0("YY", 1:N_GENES)
-    colnames(ds) <- paste0("S", 1:ncol(ds))
+    colnames(ds) <- paste0("S", seq_len(ncol(ds)))
 
     gr <- data.frame(
         n1 =  c(paste0("YY", seq(1, N_GENES, 2))),

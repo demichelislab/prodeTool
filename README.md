@@ -7,7 +7,9 @@
 
 <!-- badges: end -->
 
-N.B.: this repository is still a work in progress. 
+*this repository is still a work in progress.*
+*N.B.: with current version 0.1.0, NIE and NICE scores will result as NAs in case of a gene displaying a number of neighbors > 2000. Planning to extend it to 10000* 
+
 
 PRODE is an analysis framework that integrates Gene Effects data and Protein-Protein Interactions to
 compute, for each gene, Neighborhood-Informed Essential (NIE) or Neighborhood-Informd Context Essential (NICE) scores. 
