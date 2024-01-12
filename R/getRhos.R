@@ -130,7 +130,7 @@ getRealRhosFitDistr <- function(bet_tab, adj_m, back_par, scaledEst){
     if (scaledEst){
       rr_v <- rank(bet_tab[,"t value"], na.last = 'keep')/sum(!is.na(bet_tab[,"t value"]))
     } else {
-      rr_v <- rank(bet_tab[,"Estimate"], na.last = 'keep')/sum(!is.na(bet_tab[,"t value"]))
+      rr_v <- rank(bet_tab[,"Estimate"], na.last = 'keep')/sum(!is.na(bet_tab[,"Estimate"]))
     }
 
     pbs <- apply(adj_m, 1, function(x){
