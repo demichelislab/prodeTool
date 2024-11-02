@@ -144,7 +144,9 @@ present in the output. Standard `ci_split` is set at 5.
 
 ```R
 outputNIE_CI <- runProdeCI(
-    prodeInput        = prodeInputNIE
+    prodeInput  = prodeInputNIE
+    ci_splits   = 10, 
+    ci_level    = 0.95
 )
 
 outputNICE

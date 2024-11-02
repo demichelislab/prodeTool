@@ -1,6 +1,6 @@
 Package: prodeTool
 Title: Prode Tool 
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: 
     person("Thomas", "Cantore", , "thomas.cantore@unitn.it", role = c("aut", "cre"))
 Description: The prodeTool package implements PRODE, an analysis workflow that integrates Gene Effects data and Protein-Protein
