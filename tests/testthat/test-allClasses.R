@@ -30,6 +30,8 @@
         n1 =  sample(paste0("YY", 1:(N_GENES-1)), N_GENES*2, replace=T),
         n2 =  sample(paste0("YY", 1:N_GENES), N_GENES*2, replace=T)
     )
+    
+    wws <- 1:nrow(adj_m)
 
     adj_m <- .getAdjMatr(gr, rownames(ds))
 
@@ -37,8 +39,8 @@
         as.formula('~a'),
         as.data.frame(dm)
     )
-
-    obj <- newProdeInput(ds, dm, design, adj_m, 'NIE')
+    
+    obj <- newProdeInput(ds, dm, design, adj_m, 'NIE', wws, gr)
 
     fit_tab <- fitLms(
         x = stats::model.matrix.default(as.formula('~a'), dm),
@@ -62,7 +64,7 @@
 # Test newProdeInput ...........................................................
 
 test_that("newProdeInput deals with wrong input", {
-    expect_error(newProdeInput(ds, dm, design, adj_m, NA))
+    expect_error(newProdeInput(ds, dm, design, adj_m, NA, wws))
 })
 
 test_that("newProdeInput assay returns correct data", {

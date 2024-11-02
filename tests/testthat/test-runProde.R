@@ -34,7 +34,7 @@
         as.data.frame(dm)
     )
 
-    obj <- newProdeInput(ds, dm, design, adj_m, 'NIE')
+    obj <- newProdeInput(ds, dm, design, adj_m, 'NIE', weights = NULL)
 
     fit_tab <- fitLms(
         x = stats::model.matrix.default(as.formula('~a'), dm),

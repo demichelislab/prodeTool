@@ -8,7 +8,7 @@ Description: The prodeTool package implements PRODE, an analysis workflow that i
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.1
 Depends: 
     R (>= 3.6)
 Imports: 

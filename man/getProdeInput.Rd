@@ -4,7 +4,13 @@
 \alias{getProdeInput}
 \title{Constructs input object for PRODE run.}
 \usage{
-getProdeInput(score_matrix, col_data, edge_table, design = NULL)
+getProdeInput(
+  score_matrix,
+  col_data,
+  edge_table,
+  design = NULL,
+  edge_weights = NULL
+)
 }
 \arguments{
 \item{score_matrix}{matrix of input scores with genes on rows

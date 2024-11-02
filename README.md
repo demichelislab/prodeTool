@@ -130,6 +130,27 @@ outputNICE <- runProde(
 
 outputNICE
 ```
+### NIE and NICE scores with Confidence Interval on weighted networks 
+When running the function `runProdeCI()`, by introducing edge weights as input, 
+is now possible to run PRODE on weighted interactions. The function is a wrapper 
+around `runPRODE()` and runs multiple times, each time refining the input edge 
+list by removing increasing number of interactions with lower weights. The output 
+NIE and NICE scores will result as the average across these iterations and the 
+together with reported confidence interval estimates `CI_lower` and `CI_higher`, 
+where the confidence level is defined by the parameter `ci_level`. Importantly, 
+the number of iterations is defined by the `ci_split` parameter. If any gene 
+will show no interactions at higher stringency thresholds, they will not be 
+present in the output. Standard `ci_split` is set at 5. 
+
+```R
+outputNIE_CI <- runProdeCI(
+    prodeInput        = prodeInputNIE
+)
+
+outputNICE
+```
+
+
 #### Output description  
 When running PRODE with `extendedNICEStats=T`, additional columns are computed: 
 
@@ -140,4 +161,4 @@ When running PRODE with `extendedNICEStats=T`, additional columns are computed:
 * `ctrl_n` is the number of samples in the control group.
 * `case_n` is the number of samples in the case group.
 
-*N.B.: with current version 0.1.0, NIE and NICE scores will result as NAs in case of a gene displaying a number of neighbors > 5000* 
+*N.B.: with current version 0.2.0, NIE and NICE scores will result as NAs in case of a gene displaying a number of neighbors > 5000* 

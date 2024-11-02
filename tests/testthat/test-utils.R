@@ -392,7 +392,7 @@ test_that('.inputCheck raises error in case of wrong input (7)',{
 
 test_that('.inputCheck raises error in case of wrong input (8)',{
 
-    rownames(ds)[1] <- 'xx'
+    rownames(dm)[1] <- 'xx'
 
     expect_error(
         .inputCheck(
@@ -435,6 +435,61 @@ test_that('.inputCheck raises error in case of wrong input (10)',{
 
 })
 
+# test_that('.inputCheck raises error in case of wrong input (11)',{
+#   
+#   # number of iterations greater than variety of weights 
+#   expect_error(
+#     .inputCheck(
+#       score_matrix = ds,
+#       col_data = dm,
+#       edge_table = gr, 
+#       edge_weights=rep(c(1:nrow(gr))), 
+#       n_iter = 30
+#     )
+#   )
+#   
+# })
 
+test_that('.inputCheck raises error in case of wrong input (12)',{
+  
+  # weights are not numeric 
+  expect_error(
+    .inputCheck(
+      score_matrix = ds,
+      col_data = dm,
+      edge_table = gr, 
+      edge_weights=letters[20]
+    )
+  )
+  
+})
+
+test_that('.inputCheck raises error in case of wrong input (12)',{
+  
+  # weights are less than interactions
+  expect_error(
+    .inputCheck(
+      score_matrix = ds,
+      col_data = dm,
+      edge_table = gr, 
+      edge_weights=1:3
+    )
+  )
+  
+})
+
+test_that('.inputCheck raises error in case of wrong input (12)',{
+  
+  # weights are less than interactions
+  expect_error(
+    .inputCheck(
+      score_matrix = ds,
+      col_data = dm,
+      edge_table = gr, 
+      edge_weights=c(NA, 2:20)
+    )
+  )
+  
+})
 
 
