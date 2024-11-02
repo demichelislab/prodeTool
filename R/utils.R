@@ -99,12 +99,55 @@
     all(rownames(beta_tab) == colnames(adj_mat))
 }
 
+.findCommonIndexes <- function(ci_splits, weights, etab, wdir='<'){
+  
+  thrs <- seq(min(enet$score), max(enet$score), length.out = ci_splits)[
+  1:(ci_splits -1)]
+  
+  ids <- lapply(1:length(thrs), function(i){
+    which(weights >= thrs[i])
+  })
+  
+  all_gns <- Reduce(intersect, lapply(ids, function(kk){
+    etab_loc <- etab[kk,-3]
+    unique(unlist(etab_loc))
+  }))
+  
+  etab <- etab[which(etab[,1] %in% all_gns & etab[,2] %in% all_gns),]
+  
+  list(
+    etab, ids
+  )
+  
+}
+
+.getCI <- function(points){
+  # Compute the mean and standard error
+  mean_value <- mean(points)
+  stderr <- sd(points) / sqrt(length(points))
+  
+  # Compute the 95% CI (using t-distribution)
+  alpha <- 0.05  # 95% CI -> alpha = 0.05
+  t_critical <- qt(1 - alpha / 2, df = length(points) - 1)  # t-critical value
+  
+  # Lower and upper bounds of the CI
+  ci_lower <- mean_value - t_critical * stderr
+  ci_upper <- mean_value + t_critical * stderr
+  
+  c(ci_lower, ci_upper)
+}
+
+.mergeResTable <- function(res_tab, gns){
+  res_tab[match(gns, res_tab$gene),] -> res_tab
+  return(res_tab)
+}
+
 # Checks for input data --------------------------------------------------------
 
 .inputCheck <- function(
-    score_matrix, col_data, design, edge_table
+    score_matrix, col_data, design=NULL, edge_table, edge_weights=NULL
 ){
-
+  
     if (!is.matrix(score_matrix)){
         stop("Input score table is not a matrix object.")
     }
@@ -174,6 +217,24 @@
 
     if (dim(edge_table)[2] != 2){
         stop("Edge table has more than two columns.")
+    }
+  
+    # Input edge weigths 
+  
+    if (!is.null(edge_weights)){
+
+      if (!is.numeric(edge_weights)){
+        stop('Provided edge weights are not numeric')
+      }
+
+      if (length(edge_weights)!=nrow(edge_table)){
+        stop('Number of weights and rows of edge table do not match')
+      }
+      
+      if (any(is.na(edge_weights))){
+        stop('Some weights contain NAs. Please remove those edges and weights.')
+      }
+
     }
 
     # all_gns <- unique(c(edge_table))

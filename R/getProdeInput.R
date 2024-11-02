@@ -24,7 +24,8 @@
 #' @returns An object of class \linkS4class{prodeInput}.
 #'
 #' @export
-getProdeInput <- function(score_matrix, col_data, edge_table, design=NULL){
+getProdeInput <- function(score_matrix, col_data, edge_table, design=NULL, 
+                          edge_weights=NULL){
 
     ## Input check .............................................................
 
@@ -32,7 +33,8 @@ getProdeInput <- function(score_matrix, col_data, edge_table, design=NULL){
         score_matrix = score_matrix,
         col_data     = col_data,
         edge_table   = edge_table,
-        design       = design
+        design       = design, 
+        edge_weights = edge_weights
     )
 
     if (is.null(design)){
@@ -74,12 +76,30 @@ getProdeInput <- function(score_matrix, col_data, edge_table, design=NULL){
 
     ## Class Construction ......................................................
 
+    if (!is.null(edge_weights)){
+       message(paste0('Set up for confidence intervals across Edges Weights...'))
+    }
+    
     newProdeInput(
         score_matrix = score_matrix,
         col_data     = col_data,
         design       = design,
         adjMatrix    = adj_m,
-        modality     = mod
+        modality     = mod, 
+        weights      = edge_weights, 
+        etab         = edge_table
     )
 
 }
+
+
+
+
+
+
+
+
+
+
+
+

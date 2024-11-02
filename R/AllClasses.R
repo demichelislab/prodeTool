@@ -15,14 +15,16 @@
     slots = representation(
         design     = "ANY",
         adjMatrix  = "Matrix",
-        modality   = "character"
+        modality   = "character", 
+        weights    = "ANY", 
+        etab       = "ANY"
     ),
     contains="SummarizedExperiment"
 )
 
 # prodeInput Class Constructor.................................................
 
-newProdeInput <- function(score_matrix, col_data, design, adjMatrix, modality){
+newProdeInput <- function(score_matrix, col_data, design, adjMatrix, modality, weights=NULL, etab=NULL){
 
     se <- SummarizedExperiment::SummarizedExperiment(
         assays     = list(score_matrix = score_matrix),
@@ -33,11 +35,12 @@ newProdeInput <- function(score_matrix, col_data, design, adjMatrix, modality){
         se,
         design     = design,
         adjMatrix  = adjMatrix,
-        modality   = modality
+        modality   = modality, 
+        weights    = weights, 
+        etab       = etab
     )
 
 }
-
 
 # Class prodeResults ===========================================================
 

@@ -62,6 +62,22 @@ setGeneric("subsetAdjMatrix", function(object, ...) standardGeneric("subsetAdjMa
 setMethod("subsetAdjMatrix", signature = "prodeInput",
           definition = function(object, nms) object@adjMatrix[nms,nms])
 
+#' weights
+#'
+#' @description This function allows to access modality in a \linkS4class{prodeInput}
+#' object.
+#' @returns a character string.
+#' @rdname weights
+#' @usage NULL
+#' @export
+setGeneric("weights", function(object) standardGeneric("weights"))
+
+#' @rdname weights
+#' @aliases modality
+#' @usage NULL
+setMethod("weights", signature = "prodeInput",
+          definition = function(object) object@weights)
+
 # Accessors for ProdeResults ===================================================
 
 #' results
