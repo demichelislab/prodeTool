@@ -2,7 +2,6 @@
 
 <!-- badges: start -->
 
-[![CodeFactor](https://www.codefactor.io/repository/github/cantorethomas/prodetool/badge)](https://www.codefactor.io/repository/github/cantorethomas/prodetool)
 [![Codecov test coverage](https://codecov.io/gh/cantorethomas/prodeTool/branch/main/graph/badge.svg)](https://app.codecov.io/gh/cantorethomas/prodeTool?branch=main)
 
 <!-- badges: end -->
@@ -131,7 +130,7 @@ outputNICE <- runProde(
 outputNICE
 ```
 ### NIE and NICE scores with Confidence Interval on weighted networks 
-When running the function `runProdeCI()`, by introducing edge weights as input, 
+When running the function `runProdeCI()`, by introducing edge weights as within `getProdeInput()`, 
 is now possible to run PRODE on weighted interactions. The function is a wrapper 
 around `runPRODE()` and runs multiple times, each time refining the input edge 
 list by removing increasing number of interactions with lower weights. The output 
