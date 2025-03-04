@@ -11,6 +11,10 @@
 #'    considering thee unscaled coefficient. Default set to \code{TRUE}.
 #' @param ci_splits integer, the number of bins in which divide the edge weights. Default is 5. 
 #' @param ci_level integer, the confidence level for the CI computation, default 0.95.
+#' @param design this is the design formula required for NICE score computation. In the case of
+#'    NIE score computation, this can be ignored (default set to \code{NULL}). \code{design} has to
+#'    be a \code{formula} object. Last variable in formula will be considered as the group
+#'    variable for the linear model fit, requiring 1 for case group and 0 for control group.
 #' @returns for \code{results()}, it returns a data.frame with different results
 #'     as columns, depending if NIE or NICE scores have been computed.
 #'     \subsection{Gene-level results}{
@@ -55,7 +59,8 @@ runProdeCI <- function(
     scaledEst=T,
     filterCtrl = F,
     ci_splits = 10, 
-    ci_level = 0.95
+    ci_level = 0.95, 
+    design = NULL
 ){
   
   idxs_etb <- .findCommonIndexes(ci_splits, prodeInput@weights, prodeInput@etab)
@@ -66,7 +71,10 @@ runProdeCI <- function(
     runs <- lapply(idxs_etb[[2]], function(kk){
       message('Iteration number: ', k)
       k <<- k+1
-      enet_loc <- prodeInput@etab[kk,-3]
+      enet_loc <- prodeInput@etab[kk,]
+      
+      mm <- prodeInput@assays@data$score_matrix
+      dd <- prodeInput@colData
       
       inPRO <- suppressMessages(getProdeInput(mm, dd, enet_loc))
       ouPRO <- suppressMessages(runProde(inPRO, scaledEst = F))
@@ -74,16 +82,24 @@ runProdeCI <- function(
       
     })
   } else {
+    
+    if (is.null(design)){
+      stop('Please provide design formula for NICE scores CI')
+    }
+    
     k <- 1
     runs <- lapply(idxs_etb[[2]], function(kk){
       message('Iteration number: ', k)
       k <<- k+1
-      enet_loc <- prodeInput@etab[kk,-3]
+      enet_loc <- prodeInput@etab[kk,]
       
-      inPRO <- suppressMessages(getProdeInput(mm, dd, enet_loc, prodeInput@design))
+      mm <- prodeInput@assays@data$score_matrix
+      dd <- prodeInput@colData
+      
+      inPRO <- suppressMessages(getProdeInput(mm, dd, enet_loc, design))
       ouPRO <- suppressMessages(runProde(inPRO, scaledEst = scaledEst, filterCtrl = filterCtrl))
       
-      return(ouPRO@results)
+      return(ouPRO)
       
     })
   }

@@ -30,10 +30,9 @@
         n1 =  sample(paste0("YY", 1:(N_GENES-1)), N_GENES*2, replace=T),
         n2 =  sample(paste0("YY", 1:N_GENES), N_GENES*2, replace=T)
     )
-    
-    wws <- 1:nrow(adj_m)
 
     adj_m <- .getAdjMatr(gr, rownames(ds))
+    wws <- 1:nrow(adj_m)
 
     design <- stats::model.matrix.default(
         as.formula('~a'),

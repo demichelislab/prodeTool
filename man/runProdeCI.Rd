@@ -9,7 +9,8 @@ runProdeCI(
   scaledEst = T,
   filterCtrl = F,
   ci_splits = 10,
-  ci_level = 0.95
+  ci_level = 0.95,
+  design = NULL
 )
 }
 \arguments{
@@ -23,6 +24,11 @@ considering thee unscaled coefficient. Default set to \code{TRUE}.}
 \item{ci_splits}{integer, the number of bins in which divide the edge weights. Default is 5.}
 
 \item{ci_level}{integer, the confidence level for the CI computation, default 0.95.}
+
+\item{design}{this is the design formula required for NICE score computation. In the case of
+NIE score computation, this can be ignored (default set to \code{NULL}). \code{design} has to
+be a \code{formula} object. Last variable in formula will be considered as the group
+variable for the linear model fit, requiring 1 for case group and 0 for control group.}
 }
 \value{
 for \code{results()}, it returns a data.frame with different results

@@ -15,7 +15,7 @@ PRODE is currently available as the R package prodeTool.
 It can be installed from github with: 
 
 ```R
-devtools::install_github('cantorethomas/prodeTool')
+devtools::install_github('demichelislab/prodeTool')
 ```
 
 ## Usage 
@@ -130,7 +130,7 @@ outputNICE <- runProde(
 outputNICE
 ```
 ### NIE and NICE scores with Confidence Interval on weighted networks 
-When running the function `runProdeCI()`, by introducing edge weights as a numeric vector 
+When running the function `runProdeCI()`, by introducing `edge_weights` as a numeric vector 
 within `getProdeInput()`, is now possible to run PRODE on weighted interactions. 
 The function is a wrapper around `runPRODE()` and runs multiple times, each time refining the input edge 
 list by removing increasing number of interactions with lower weights. The output 
@@ -142,13 +142,22 @@ will show no interactions at higher stringency thresholds, they will not be
 present in the output. Standard `ci_split` is set at 5. 
 
 ```R
+
+# Setting random weights 
+gr_w <- runif(nrow(gr))
+
+prodeInputNIE <- getProdeInput(
+  score_matrix   = ds,
+  col_data       = dm,
+  edge_table     = gr,
+  edge_weights   = gr_w
+)
+
 outputNIE_CI <- runProdeCI(
-    prodeInput  = prodeInputNIE
+    prodeInput  = prodeInputNIE,
     ci_splits   = 10, 
     ci_level    = 0.95
 )
-
-outputNICE
 ```
 
 
@@ -162,4 +171,4 @@ When running PRODE with `extendedNICEStats=T`, additional columns are computed:
 * `ctrl_n` is the number of samples in the control group.
 * `case_n` is the number of samples in the case group.
 
-*N.B.: with current version 0.2.0, NIE and NICE scores will result as NAs in case of a gene displaying a number of neighbors > 5000* 
+*N.B.: with current version 0.2.1, NIE and NICE scores will result as NAs in case of a gene displaying a number of neighbors > 5000* 

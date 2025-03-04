@@ -101,7 +101,7 @@
 
 .findCommonIndexes <- function(ci_splits, weights, etab, wdir='<'){
   
-  thrs <- seq(min(enet$score), max(enet$score), length.out = ci_splits)[
+  thrs <- seq(min(weights), max(weights), length.out = ci_splits)[
   1:(ci_splits -1)]
   
   ids <- lapply(1:length(thrs), function(i){
@@ -109,7 +109,7 @@
   })
   
   all_gns <- Reduce(intersect, lapply(ids, function(kk){
-    etab_loc <- etab[kk,-3]
+    etab_loc <- etab[kk,]
     unique(unlist(etab_loc))
   }))
   
